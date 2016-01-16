@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch 
+	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd ">
+
+	<!-- spring batch core settings -->
+	<import resource="../config/spring-batch-context.xml" />
+
+	<!-- database settings -->
+	<import resource="../config/spring-batch-datasource.xml" />
+
+	<context:component-scan base-package="com.flamingos.osp.batch.newsletter" />
+
+	<!-- partitioner job -->
+	<batch:job id="partitionNewsLetterSmsJob" job-repository="jobRepository">
+		<!-- Cache Email/SMS Templates based on userType,role and status -->
+		<batch:step id="cacheTemplate" next="masterStepPartitionedProfessional">
+			<batch:tasklet>
+				<batch:chunk reader="templateItemReader" writer="commTemplateWriter"
+					commit-interval="${osp.batch.newsletter.template.commit.interval}" />
+			</batch:tasklet>
+		</batch:step>
+		<!-- master step for professionals for template matching, #grid-size threads 
+			(grid-size) -->
+		<batch:step id="masterStepPartitionedProfessional" next="masterStepPartitionedClient">
+			<batch:partition step="slaveProfessional"
+				partitioner="professionalRangePartitioner">
+				<batch:handler grid-size="${osp.batch.newsletter.professional.gridsize}"
+					task-executor="taskExecutor" />
+			</batch:partition>
+		</batch:step>
+
+		<!-- master step for client for template matching, #grid-size threads (grid-size) -->
+		<batch:step id="masterStepPartitionedClient">
+			<batch:partition step="slaveClient" partitioner="clientRangePartitioner">
+				<batch:handler grid-size="${osp.batch.newsletter.client.gridsize}"
+					task-executor="taskExecutor" />
+			</batch:partition>
+			<!-- <batch:listeners>
+			    <batch:listener></batch:listener>
+			</batch:listeners> -->
+		</batch:step>
+		
+		<batch:listeners>
+		    <batch:listener ref="newsLetterJobListener"/>
+		</batch:listeners>
+	</batch:job>
+
+
+
+	<!-- Common for both professional and client start -->
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor"
+		scope="prototype" />
+
+	<!-- inject stepExecutionContext -->
+	<bean id="pagingUserItemProcessor"
+		class="com.flamingos.tech.osp.batch.newsletter.processor.UserCommProcessor"
+		scope="step">
+		<property name="threadName" value="#{stepExecutionContext[name]}" />
+	</bean>
+
+	<bean id="pagingUserCommJobItemWritter"
+		class="com.flamingos.tech.osp.batch.newsletter.writer.UserCommJobWritter"
+		scope="step">
+		<property name="threadName" value="#{stepExecutionContext[name]}" />
+	</bean>
+	<bean id="userMapper"
+		class="com.flamingos.tech.osp.batch.newsletter.mapper.UserMapper"
+		scope="prototype" />
+	<!-- Common for both professional and client end -->
+
+	<!-- Specific to Professionals start -->
+
+	<!-- each thread will run this job, with different stepExecutionContext 
+		values. -->
+	<batch:step id="slaveProfessional">
+		<batch:tasklet>
+			<batch:chunk reader="pagingProfessionalCommItemReader"
+				processor="pagingUserItemProcessor" writer="pagingUserCommJobItemWritter"
+				commit-interval="${osp.batch.newsletter.professional.commit.interval}" />
+		</batch:tasklet>
+	</batch:step>
+
+	<bean id="professionalRangePartitioner"
+		class="com.flamingos.tech.osp.batch.newsletter.partitioner.RangePartitionar"
+		scope="step">
+		<property name="rangeSql"
+			value="select coalesce(min(opr.prof_id),0) min_id,coalesce(max(opr.prof_id),0) max_id , count(1) tot_count from osp_professional opr
+			where opr.active_status in ( #{@commTemplateBuffer.getProfessionalJobStatusSet()} )" />
+		<property name="partingModule" value="PROFESSIONNAL_NEWSLETTER" />
+	</bean>
+
+
+	<bean id="pagingProfessionalCommItemReader"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader"
+		scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="queryProvider">
+			<bean
+				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+				<property name="dataSource" ref="dataSource" />
+				<property name="databaseType" value="mysql" />
+				<property name="selectClause"
+					value="select opr.prof_id,opr.prof_id as id,oprmu.parameter_id as u_type, opr.prof_first_name as f_name,opr.prof_middle_name as m_name,
+							opr.prof_last_name as l_name,opr.subsc_ids,opr.active_status,opr.dnd_activated,
+							oc.contact_phone,oc.contact_email,osc.cat_id as cat_id,opscm.sub_cat_id" />
+				<property name="fromClause"
+					value="from osp_professional opr
+							join osp_prof_contact opc on opr.prof_id=opc.prof_id and opc.active_status =1
+							join osp_prof_sub_cat_map opscm on opscm.prof_id=opr.prof_id and opscm.active_status=1
+							join osp_contact oc on oc.contact_id=opc.contact_id and oc.active_status=1
+							join osp_sub_category osc on osc.sub_cat_id=opscm.sub_cat_id and osc.active_status=1
+							join osp_parameter oprm on oprm.code ='CONTACT_TYPE' and oprm.name='REG_EMAIL_MOB' and oprm.active_status=1 and oprm.parameter_id=oc.contact_type
+							join osp_parameter oprmu on oprmu.code ='USER_TYPE' and oprmu.name='PREFESSIONAL' and oprmu.active_status=1" />
+				<property name="whereClause">
+					<value>
+				        <![CDATA[
+				        WHERE (opr.active_status in (:professionalStatus) and opr.prof_id >= :fromId and opr.prof_id <= :toId and opscm.sub_cat_id in ( :professionalSubCat ) )
+				        ]]>
+					</value>
+				</property>
+				<property name="sortKey" value="opr.prof_id" />
+			</bean>
+		</property>
+		<!-- Inject via the ExecutionContext in rangePartitioner -->
+		<property name="parameterValues">
+			<map>
+				<entry key="fromId" value="#{stepExecutionContext[fromId]}" />
+				<entry key="toId" value="#{stepExecutionContext[toId]}" />
+				<entry key="professionalStatus" value="#{@commTemplateBuffer.getProfessionalJobStatusSet()}" />
+				<entry key="professionalSubCat" value="#{@commTemplateBuffer.getProfessionalJobSubCatSet()}" />
+			</map>
+		</property>
+		<property name="pageSize" value="#{stepExecutionContext[pageSize]}" />
+		<property name="rowMapper" ref="userMapper" />
+	</bean>
+
+	<!-- Specific to Professionals end -->
+
+
+	<!-- Specific to Client start -->
+
+	<!-- each thread will run this job, with different stepExecutionContext 
+		values. -->
+	<batch:step id="slaveClient">
+		<batch:tasklet>
+			<batch:chunk reader="pagingClientCommItemReader"
+				processor="pagingUserItemProcessor" writer="pagingUserCommJobItemWritter"
+				commit-interval="${osp.batch.newsletter.client.commit.interval}" />
+		</batch:tasklet>
+	</batch:step>
+
+	<bean id="clientRangePartitioner"
+		class="com.flamingos.tech.osp.batch.newsletter.partitioner.RangePartitionar"
+		scope="step">
+		<property name="rangeSql"
+			value="select coalesce(min(oc.client_id),0) min_id,coalesce(max(oc.client_id),0) max_id , count(1) tot_count from osp_client oc
+			where oc.active_status in ( #{@commTemplateBuffer.getCientJobStatusSet()} )" />
+		<property name="partingModule" value="CLIENT_NEWSLETTER" />
+	</bean>
+
+
+	<bean id="pagingClientCommItemReader"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader"
+		scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="queryProvider">
+			<bean
+				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+				<property name="dataSource" ref="dataSource" />
+				<property name="databaseType" value="mysql" />
+				<property name="selectClause"
+					value="select oprm_u.parameter_id as u_type,ocl.client_id,ocl.client_id as id,ocl.client_first_name as f_name,ocl.client_middle_name as m_name,
+							ocl.client_last_name as l_name,ocl.subsc_ids,ocl.active_status,
+							oc.contact_phone,oc.contact_email,0 as cat_id,0 as sub_cat_id,ocl.dnd_activated" />
+				<property name="fromClause"
+					value="from osp_client ocl
+							join osp_client_contact occ on ocl.client_id=occ.client_id and occ.active_status=1
+							join osp_contact oc on oc.contact_id=occ.contact_id and oc.active_status=1
+							join osp_parameter oprm on oprm.code ='CONTACT_TYPE' and oprm.name='REG_EMAIL_MOB' and oprm.active_status=1 and oprm.parameter_id=oc.contact_type
+							join osp_parameter oprm_u on oprm_u.code ='USER_TYPE' and oprm_u.name='CLIENT' and oprm_u.active_status=1" />
+				<property name="whereClause">
+					<value>
+					    <![CDATA[
+					    WHERE ( ocl.active_status in ( :clientStatus ) and ocl.client_id >= :fromId AND ocl.client_id <= :toId )
+					    ]]>
+					</value>
+				</property>
+				<property name="sortKey" value="ocl.client_id" />
+			</bean>
+		</property>
+		<!-- Inject via the ExecutionContext in rangePartitioner -->
+		<property name="parameterValues">
+			<map>
+				<entry key="fromId" value="#{stepExecutionContext[fromId]}" />
+				<entry key="toId" value="#{stepExecutionContext[toId]}" />
+				<entry key="clientStatus" value="#{@commTemplateBuffer.getCientJobStatusSet()}" />
+			</map>
+		</property>
+		<property name="pageSize" value="#{stepExecutionContext[pageSize]}" />
+		<property name="rowMapper" ref="userMapper" />
+	</bean>
+
+	<!-- Specific to Client end -->
+	<!-- Template Specific beans start -->
+	<bean id="templateItemReader"
+		class="org.springframework.batch.item.database.JdbcCursorItemReader">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sql">
+			<value>
+                <![CDATA[
+ 			    select cj.comm_job_id,ct.comm_template_id,ct.template_name,ct.channel_id,ct.temp_cat_id,ct.temp_sub_cat_id,ct.is_editable,ct.file_path,
+				cj.target_user,cj.target_user_cat,cj.target_user_sub_cat,cj.target_user_status,cj.is_implicit_job,cj.email_subject,cj.content,cj.image_url,cj.job_date,cj.job_status
+				from osp_comm_template ct 
+				join osp_comm_job cj on ct.comm_template_id=cj.comm_template_id
+				where ct.active_status=1 and 
+				((cj.job_status=(select parameter_id from osp_parameter where code='JOB_STATUS' and name='INITIAL')
+				and curdate()=cj.job_date) or cj.is_implicit_job=1)   
+				and ct.temp_cat_id=(select parameter_id from osp_parameter where code='COMM_TEMPLATE_CATEGORY' and name='NEWSLETTER')
+                ]]>
+			</value>
+		</property>
+		<property name="rowMapper" ref="commJobTemplateMapper" />
+	</bean>
+
+	<bean id="commJobTemplateMapper"
+		class="com.flamingos.tech.osp.batch.newsletter.mapper.CommJobTemplateMapper" />
+	<bean id="commTemplateWriter"
+		class="com.flamingos.tech.osp.batch.newsletter.writer.CommTemplateWriter" />
+	<bean id="commTemplateBuffer" class="com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer"
+		scope="singleton" />
+	<bean id="newsLetterJobListener" class="com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener"></bean>
+	<!-- Template Specific beans end -->
+	<!-- Properties File -->
+	<context:property-placeholder
+		location="file:${CATALINA_HOME}/conf/osp.properties" />
+
+</beans>
