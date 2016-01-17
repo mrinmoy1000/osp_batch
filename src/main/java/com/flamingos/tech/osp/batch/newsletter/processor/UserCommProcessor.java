@@ -94,7 +94,7 @@ public class UserCommProcessor implements
 																	// cache
 					finalApplicableTemplates.add(oJobTemplate);
 				} else if (oTemplate.getCommChannelId() == 21
-						&& user.isDndActivated()) {// fetch from parameter cache
+						&& !user.isDndActivated()) {// fetch from parameter cache
 					finalApplicableTemplates.add(oJobTemplate);
 				}
 			}
