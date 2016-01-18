@@ -25,10 +25,10 @@ public class UserMapper implements RowMapper<User> {
 		oUser.setlName(rs.getString("l_name"));
 		oUser.setPhoneNumber(rs.getString("contact_phone"));
 		oUser.setEmailId(rs.getString("contact_email"));
-		oUser.setStatus(rs.getInt("active_status"));
-		if (null != rs.getString("subsc_ids")
-				&& !"".equals(rs.getString("subsc_ids").trim())) {
-				String[] strIds = rs.getString("subsc_ids").split(":");
+		oUser.setStatus(rs.getInt("status"));
+		if (null != rs.getString("subsc_id")
+				&& !"".equals(rs.getString("subsc_id").trim())) {
+				String[] strIds = rs.getString("subsc_id").split(":");
 				for (int index = 0; index < strIds.length; index++) {
 					oUser.getSubscriptionsCat().add(
 							Integer.valueOf(strIds[index]));
@@ -36,7 +36,7 @@ public class UserMapper implements RowMapper<User> {
 		}
 		oUser.setCategoryId(rs.getInt("cat_id"));
 		oUser.setSubCategoryId(rs.getInt("sub_cat_id")); 
-		oUser.setDndActivated(rs.getBoolean("dnd_activated"));
+		oUser.setDndActivated(rs.getBoolean("dnd_activated_flag"));
 		return oUser;
 	}
 

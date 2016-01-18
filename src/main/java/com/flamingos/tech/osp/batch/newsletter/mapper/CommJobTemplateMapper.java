@@ -27,20 +27,20 @@ public class CommJobTemplateMapper implements RowMapper<CommJobTemplate> {
 		commJobTemplate.setCommTemplate(commTemplate);
 
 		commTemplate.setTemplateId(rs.getInt("comm_template_id"));
-		commTemplate.setTemplateName(rs.getString("template_name"));
-		commTemplate.setCommChannelId(rs.getInt("channel_id"));
+		commTemplate.setTemplateName(rs.getString("temp_name"));
+		commTemplate.setCommChannelId(rs.getInt("comm_channel_id"));
 		commTemplate.setTemplateCatId(rs.getInt("temp_cat_id"));
 		commTemplate.setTemplateSubCatId(rs.getInt("temp_sub_cat_id"));
-		commTemplate.setIsEditable(rs.getBoolean("is_editable"));
-		commTemplate.setTemplateFileName(rs.getString("file_path"));
+		commTemplate.setIsEditable(rs.getBoolean("temp_is_editable"));
+		commTemplate.setTemplateFileName(rs.getString("temp_file_path"));
 
 		commJob.setCommJobId(rs.getInt("comm_job_id"));
 		commJob.setTemplateId(rs.getInt("comm_template_id"));
-		commJob.setTargetUser(rs.getInt("target_user"));
+		commJob.setTargetUser(rs.getInt("comm_target_user"));
 		commJob.setTargetUserCat(rs.getString("target_user_cat"));
 		commJob.setTargetUserSubCat(rs.getString("target_user_sub_cat"));
 		commJob.setEmailSubject(rs.getString("email_subject"));
-		commJob.setContent(rs.getBlob("content"));
+		commJob.setContent(rs.getBlob("msg_content"));
 		commJob.setImageUrl(rs.getString("image_url"));
 		commJob.setJobDate(rs.getDate("job_date"));
 		commJob.setJobStatus(rs.getInt("job_status"));;

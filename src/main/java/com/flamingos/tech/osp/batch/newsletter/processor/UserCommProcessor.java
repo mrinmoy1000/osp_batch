@@ -68,7 +68,7 @@ public class UserCommProcessor implements
 			finalApplicabelTemplates = discardUnsubscribedAndRepeatTemplate(user,
 					applicabelTemplates);
 		}
-		if (!applicabelTemplates.isEmpty()) {
+		if (!finalApplicabelTemplates.isEmpty()) {
 			communication=new UserCommunication();
 			communication.setLstCommJobTemplate(finalApplicabelTemplates);
 			communication.setoUser(user);

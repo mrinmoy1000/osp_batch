@@ -26,6 +26,7 @@ public class NewsLetterJobListener implements JobExecutionListener {
 	 */
 	public void afterJob(JobExecution jobExecution) {
 		// TODO Auto-generated method stub
+		
 		System.out.println("Newsletter Job Executed");
 	}
 

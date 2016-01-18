@@ -38,7 +38,7 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 		/**
 		 * Buffer communication templates indexed by user type,role_status.
 		 */
-		String SQL_SELECTIVE_ACTIVE_USER_STATUS = "select parameter_id from osp_parameter where code='USER_STATUS' and active_status=1";
+		String SQL_SELECTIVE_ACTIVE_USER_STATUS = "select param_id from osp_parameter where param_code='USER_STATUS' and active_status=1";
 		List<Integer> activeUserStatus = jdbcTemplate.queryForList(
 				SQL_SELECTIVE_ACTIVE_USER_STATUS, Integer.class);
 

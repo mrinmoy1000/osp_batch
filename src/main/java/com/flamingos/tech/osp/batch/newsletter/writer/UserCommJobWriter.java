@@ -20,7 +20,7 @@ import com.flamingos.tech.osp.batch.newsletter.model.UserCommunication;
  * @author Mrinmoy
  *
  */
-public class UserCommJobWritter implements ItemWriter<UserCommunication> {
+public class UserCommJobWriter implements ItemWriter<UserCommunication> {
 
 	private String threadName;
 	

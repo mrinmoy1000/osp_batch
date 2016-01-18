@@ -3,6 +3,7 @@
  */
 package com.flamingos.tech.osp.batch.buffer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +32,18 @@ public class CommTemplateBuffer {
 	 * Key is <job_id>_<template_id>.
 	 */
 	private static Map<String, CommJobTemplate> jobTemplateIdMap = new HashMap<String, CommJobTemplate>();
-
+	
 	private static Set<Integer> professionalJobStatusSet=new HashSet<Integer>();
 	
 	private static Set<Integer> cientJobStatusSet=new HashSet<Integer>();
 	
 	private static Set<Integer> professionalJobSubCatSet = new HashSet<Integer>();
+
+	{
+		professionalJobStatusSet.add(0);
+		cientJobStatusSet.add(0);
+		professionalJobSubCatSet.add(0);
+	}
 	/**
 	 * @return the templateForProfessionals
 	 */
