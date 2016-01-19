@@ -8,10 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.flamingos.osp.bean.ConfigParamBean;
+import com.flamingos.osp.dto.ConfigParamDto;
+import com.flamingos.osp.util.AppConstants;
 import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJob;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJobTemplate;
@@ -21,12 +26,29 @@ import com.flamingos.tech.osp.batch.newsletter.model.CommTemplate;
  * @author Mrinmoy
  *
  */
-public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
+public class CommTemplateWriter implements ItemWriter<CommJobTemplate>,
+		InitializingBean {
+
 	@Autowired
 	private NamedParameterJdbcTemplate oNPJdbcTemplate;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private ConfigParamBean configParamBean;
+
+	ConfigParamDto oProfessionalUser = null;
+
+	ConfigParamDto oClientUser = null;
+	
+	ConfigParamDto oAllUser = null;
+
+	@Value("${query_osp_newsletter_all_active_sub_category_ids}")
+	private String SQL_ALL_ACTIVE_SUB_CAT;
+
+	@Value("${query_osp_newsletter_all_active_sub_category_ids_in_cat_ids}")
+	private String SQL_SELECTIVE_ACTIVE_SUB_CAT;
 
 	/*
 	 * (non-Javadoc)
@@ -38,9 +60,14 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 		/**
 		 * Buffer communication templates indexed by user type,role_status.
 		 */
-		String SQL_SELECTIVE_ACTIVE_USER_STATUS = "select param_id from osp_parameter where param_code='USER_STATUS' and active_status=1";
-		List<Integer> activeUserStatus = jdbcTemplate.queryForList(
-				SQL_SELECTIVE_ACTIVE_USER_STATUS, Integer.class);
+		List<ConfigParamDto> activeUserStatusParam = configParamBean
+				.getParametersByCode(AppConstants.PARAM_CODE_USER_STATUS);
+		List<Integer> activeUserStatus = new ArrayList<Integer>();
+		if (null != activeUserStatusParam) {
+			for (ConfigParamDto oConfigParamDto : activeUserStatusParam) {
+				activeUserStatus.add(oConfigParamDto.getParameterid());
+			}
+		}
 
 		for (CommJobTemplate oCommJobTemplate : oCommJobTemplates) {
 			CommTemplate oCommTemplate = oCommJobTemplate.getCommTemplate();
@@ -53,8 +80,8 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 			 * For Professional key is Sub Category id.. All represents all sub
 			 * category
 			 */
-			if ((oCommJob.getTargetUser() == 23) // PROFESSIONAL
-					|| (oCommJob.getTargetUser() == 25)) { // ALL
+			if ((oCommJob.getTargetUser() == oProfessionalUser.getParameterid()) // PROFESSIONAL
+					|| (oCommJob.getTargetUser() == oAllUser.getParameterid())) { // ALL
 				if (!oCommJob.isTargetUserAllStatus()) {
 					CommTemplateBuffer.getProfessionalJobStatusSet().addAll(
 							oCommJob.getLstTargetUserStatus());
@@ -66,8 +93,6 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 						.getTemplateForProfessionals();
 				List<Integer> activeSubCat = null;
 				if (oCommJob.isTargetUserAllCat()) {
-					String SQL_ALL_ACTIVE_SUB_CAT = "select sc.sub_cat_id from osp_sub_category sc join osp_category oc on sc.cat_id=oc.cat_id"
-							+ " and sc.active_status=1 and oc.active_status=1";
 					activeSubCat = jdbcTemplate.queryForList(
 							SQL_ALL_ACTIVE_SUB_CAT, Integer.class);
 				} else if (!oCommJob.getLstTargetUserCatIds().isEmpty()) {
@@ -76,11 +101,9 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 						inCatIds.append(catId).append(',');
 					}
 					inCatIds.deleteCharAt(inCatIds.length() - 1);
-					String SQL_SELECTIVE_ACTIVE_SUB_CAT = "select sc.sub_cat_id from osp_sub_category sc join osp_category oc on sc.cat_id=oc.cat_id"
-							+ " and sc.active_status=1 and oc.active_status=1 and oc.cat_id in ("
-							+ inCatIds + ")";
+					Object[] args = new Object[] { inCatIds };
 					activeSubCat = jdbcTemplate.queryForList(
-							SQL_SELECTIVE_ACTIVE_SUB_CAT, Integer.class);
+							SQL_SELECTIVE_ACTIVE_SUB_CAT, args, Integer.class);
 				}
 				if (null != activeSubCat && !activeSubCat.isEmpty()) {
 					if (!oCommJob.isTargetUserAllSubCat()
@@ -106,8 +129,8 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 
 			// Assuming Client can be only ALL. i.e. All types of clients will
 			// receive all emails for category ALl and Client.
-			if ((oCommJob.getTargetUser() == 24) // CLIENT
-					|| (oCommJob.getTargetUser() == 25)) {// ALL
+			if ((oCommJob.getTargetUser() == oClientUser.getParameterid()) // CLIENT
+					|| (oCommJob.getTargetUser() == oAllUser.getParameterid())) {// ALL
 				if (!oCommJob.isTargetUserAllStatus()) {
 					CommTemplateBuffer.getCientJobStatusSet().addAll(
 							oCommJob.getLstTargetUserStatus());
@@ -118,14 +141,28 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 				Map<String, List<CommJobTemplate>> clientJobTemplates = CommTemplateBuffer
 						.getTemplateForClients();
 				List<CommJobTemplate> allClientJobTempList = clientJobTemplates
-						.get("ALL");
+						.get(AppConstants.KEY_ALL);
 				if (null == allClientJobTempList) {
 					allClientJobTempList = new ArrayList<CommJobTemplate>();
-					clientJobTemplates.put("ALL", allClientJobTempList);
+					clientJobTemplates.put(AppConstants.KEY_ALL,
+							allClientJobTempList);
 				}
 				allClientJobTempList.add(oCommJobTemplate);
 			}
 		}
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// TODO Auto-generated method stub
+		oProfessionalUser = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_USER_TYPE,
+				AppConstants.PARAM_NAME_PROFESSIONAL);
+		oClientUser = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_USER_TYPE,
+				AppConstants.PARAM_NAME_CLIENT);
+		oAllUser = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_USER_TYPE, AppConstants.PARAM_NAME_ALL);
 	}
 
 }

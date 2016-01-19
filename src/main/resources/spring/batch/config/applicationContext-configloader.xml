@@ -17,12 +17,12 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>file:/home/computer2/installation/apache-tomcat-8.0.30/conf/osp.properties
-				</value>
-				<value>/WEB-INF/classes/queryList.properties
-				</value>
+				<value>queryList.properties</value>
+				<value>file:${CATALINA_HOME}/conf/osp.properties</value>
 			</list>
 		</property>
 	</bean>
-	
+	<!-- Properties File -->
+	<!-- <context:property-placeholder
+		location="file:${CATALINA_HOME}/conf/osp.properties" />  -->
 </beans>

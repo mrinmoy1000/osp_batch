@@ -9,7 +9,7 @@ public class BaseDaoImpl {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	@Autowired
+	//@Autowired
 	private SimpleJdbcCall simpleJdbcCall;
 
 	public JdbcTemplate getJdbcTemplate() {

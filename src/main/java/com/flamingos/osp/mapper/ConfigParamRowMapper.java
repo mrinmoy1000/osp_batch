@@ -16,11 +16,11 @@ public class ConfigParamRowMapper implements RowMapper<ConfigParamDto>{
 		ConfigParamDto param=null;
 		if(rs!=null){
 			param=new ConfigParamDto();
-			param.setParameterid(rs.getInt("parameter_id"));
-			param.setCode(rs.getString("code"));
-			param.setName(rs.getString("name"));
-			param.setValue(rs.getString("value"));
-			param.setDescription(rs.getString("description"));
+			param.setParameterid(rs.getInt("param_id"));
+			param.setCode(rs.getString("param_code"));
+			param.setName(rs.getString("param_name"));
+			param.setValue(rs.getString("param_value"));
+			param.setDescription(rs.getString("param_desc"));
 		}
 		return param;
 	}

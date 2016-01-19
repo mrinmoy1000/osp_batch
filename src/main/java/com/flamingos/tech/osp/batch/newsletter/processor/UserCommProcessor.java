@@ -8,7 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.flamingos.osp.bean.ConfigParamBean;
+import com.flamingos.osp.dto.ConfigParamDto;
+import com.flamingos.osp.util.AppConstants;
 import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.model.User;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJob;
@@ -21,7 +26,7 @@ import com.flamingos.tech.osp.batch.newsletter.model.UserCommunication;
  *
  */
 public class UserCommProcessor implements
-		ItemProcessor<User, UserCommunication> {
+		ItemProcessor<User, UserCommunication>,InitializingBean {
 
 	private String threadName;
 
@@ -33,6 +38,32 @@ public class UserCommProcessor implements
 		this.threadName = threadName;
 	}
 
+	@Autowired
+	private ConfigParamBean configParamBean;
+
+	ConfigParamDto oProfessionalUser = null;
+
+	ConfigParamDto oClientUser = null;
+	ConfigParamDto oEmailChannel = null;
+	ConfigParamDto oSmsChannel = null;
+
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		oProfessionalUser = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_USER_TYPE,
+				AppConstants.PARAM_NAME_PROFESSIONAL);
+		oClientUser = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_USER_TYPE,
+				AppConstants.PARAM_NAME_CLIENT);
+		oEmailChannel = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_COMM_CHANNEL,
+				AppConstants.PARAM_NAME_EMAIL);
+		oSmsChannel = configParamBean.getParameterByCodeName(
+				AppConstants.PARAM_CODE_COMM_CHANNEL,
+				AppConstants.PARAM_NAME_SMS);		
+	}
+
 	public UserCommunication process(User user) throws Exception {
 		UserCommunication communication = null;
 		/*
@@ -41,7 +72,7 @@ public class UserCommProcessor implements
 		 */
 		List<CommJobTemplate> applicabelTemplates = new ArrayList<CommJobTemplate>();
 		List<CommJobTemplate> finalApplicabelTemplates = new ArrayList<CommJobTemplate>();
-		if (user.getUserType() == 23) {
+		if (user.getUserType() == oProfessionalUser.getParameterid()) {
 			Map<Integer, List<CommJobTemplate>> profTemplates = CommTemplateBuffer
 					.getTemplateForProfessionals();
 			/*
@@ -52,11 +83,11 @@ public class UserCommProcessor implements
 				applicabelTemplates.addAll(profTemplates.get(user
 						.getSubCategoryId()));
 			}
-		} else if (user.getUserType() == 24) {
+		} else if (user.getUserType() == oClientUser.getParameterid()) {
 			Map<String, List<CommJobTemplate>> clientTemplates = CommTemplateBuffer
 					.getTemplateForClients();
-			if (null != clientTemplates.get("ALL")) {// All Segment Templates.
-				applicabelTemplates.addAll(clientTemplates.get("ALL"));
+			if (null != clientTemplates.get(AppConstants.KEY_ALL)) {// All Segment Templates.
+				applicabelTemplates.addAll(clientTemplates.get(AppConstants.KEY_ALL));
 			}
 			/*
 			 * String key = user.getRoleId() + ""; if (null !=
@@ -65,11 +96,11 @@ public class UserCommProcessor implements
 			 */
 		}
 		if (!applicabelTemplates.isEmpty()) {
-			finalApplicabelTemplates = discardUnsubscribedAndRepeatTemplate(user,
-					applicabelTemplates);
+			finalApplicabelTemplates = discardUnsubscribedAndRepeatTemplate(
+					user, applicabelTemplates);
 		}
 		if (!finalApplicabelTemplates.isEmpty()) {
-			communication=new UserCommunication();
+			communication = new UserCommunication();
 			communication.setLstCommJobTemplate(finalApplicabelTemplates);
 			communication.setoUser(user);
 		}
@@ -87,19 +118,19 @@ public class UserCommProcessor implements
 					.getLstTargetUserStatus().contains(user.getStatus()))
 					&& oCommJob.getLstTargetUserStatus().contains(
 							user.getStatus())) {
-				if (oTemplate.getCommChannelId() == 20
+				if (oTemplate.getCommChannelId() == oEmailChannel.getParameterid()
 						&& user.getSubscriptionsCat().contains(
 								oTemplate.getTemplateSubCatId())) {// fetch from
 																	// parameter
 																	// cache
 					finalApplicableTemplates.add(oJobTemplate);
-				} else if (oTemplate.getCommChannelId() == 21
-						&& !user.isDndActivated()) {// fetch from parameter cache
+				} else if (oTemplate.getCommChannelId() == oSmsChannel.getParameterid()
+						&& !user.isDndActivated()) {// fetch from parameter
+													// cache
 					finalApplicableTemplates.add(oJobTemplate);
 				}
 			}
 		}
 		return finalApplicableTemplates;
 	}
-
 }

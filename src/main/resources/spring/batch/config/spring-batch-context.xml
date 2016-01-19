@@ -6,7 +6,6 @@
 	<!-- stored job-meta in memory -->
 	<!-- <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean"> 
 		<property name="transactionManager" ref="transactionManager" /> </bean> -->
-	<import resource="applicationContext-configloader.xml"/>
 	<!-- stored job-meta in database -->
 	<bean id="jobRepository"
 		class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">

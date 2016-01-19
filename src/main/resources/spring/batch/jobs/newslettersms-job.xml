@@ -11,6 +11,7 @@
 	http://www.springframework.org/schema/context 
 	http://www.springframework.org/schema/context/spring-context.xsd ">
 
+    <import resource="../config/applicationContext-configloader.xml"/>
 	<!-- spring batch core settings -->
 	<import resource="../config/spring-batch-context.xml" />
 
@@ -243,8 +244,5 @@
 		scope="singleton" />
 	<bean id="newsLetterJobListener" class="com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener"></bean>
 	<!-- Template Specific beans end -->
-	<!-- Properties File -->
-	<context:property-placeholder
-		location="file:${CATALINA_HOME}/conf/osp.properties" />
 
 </beans>
