@@ -2,16 +2,16 @@ package com.flamingos.osp.dto;
 
 public class ConfigParamDto {
 	
-	private int parameter_id;
+	private int parameterid;
 	private String code;
 	private String name;
 	private String value;
 	private String description;
-	public int getParameter_id() {
-		return parameter_id;
+	public int getParameterid() {
+		return parameterid;
 	}
-	public void setParameter_id(int parameter_id) {
-		this.parameter_id = parameter_id;
+	public void setParameterid(int parameterid) {
+		this.parameterid = parameterid;
 	}
 	public String getCode() {
 		return code;

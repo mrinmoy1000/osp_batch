@@ -16,7 +16,7 @@ public class ConfigParamRowMapper implements RowMapper<ConfigParamDto>{
 		ConfigParamDto param=null;
 		if(rs!=null){
 			param=new ConfigParamDto();
-			param.setParameter_id(rs.getInt("parameter_id"));
+			param.setParameterid(rs.getInt("parameter_id"));
 			param.setCode(rs.getString("code"));
 			param.setName(rs.getString("name"));
 			param.setValue(rs.getString("value"));

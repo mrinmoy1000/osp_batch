@@ -32,7 +32,7 @@ public class ConfigParamBean {
 		try{
 		listParam=configParamLoaderService.loadConfigParam();
 		for(ConfigParamDto param:listParam){
-			mapByParamId.put(Integer.toString(param.getParameter_id()), param);
+			mapByParamId.put(Integer.toString(param.getParameterid()), param);
 			mapByParamCodeAndName.put(param.getCode()+param.getName(), param);
 		}
 		}catch(OSPBusinessException ospEx){
@@ -46,5 +46,29 @@ public class ConfigParamBean {
 		}
 		
 	}
+	public ConfigParamDto getParameterById(String parameterId){
+		return getMapByParamId().get(parameterId);
+	}
+	
+	public ConfigParamDto getParameterByCodeName(String paramCodeName){
+		return getMapByParamCodeAndName().get(paramCodeName);
+	}
+
+	public Map<String, ConfigParamDto> getMapByParamId() {
+		return mapByParamId;
+	}
+
+	public List<ConfigParamDto> getListParam() {
+		return listParam;
+	}
+
+	public Map<String, ConfigParamDto> getMapByParamCodeAndName() {
+		return mapByParamCodeAndName;
+	}
+
+	public Map<String, List<ConfigParamDto>> getMapByParamCode() {
+		return mapByParamCode;
+	}
+	
 
 }

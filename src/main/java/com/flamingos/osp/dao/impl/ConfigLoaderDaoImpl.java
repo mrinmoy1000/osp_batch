@@ -17,12 +17,19 @@ public class ConfigLoaderDaoImpl extends BaseDaoImpl implements ConfigLoaderDao 
 	private String QUERY_OSP_PARAMETER_SELECT;
 
 	@Override
-	public List<ConfigParamDto> loadConfigParam() throws OSPBusinessException,Exception {
-		List<ConfigParamDto> paramList = new ArrayList<ConfigParamDto>();
+	public List<ConfigParamDto> loadConfigParam() throws OSPBusinessException,
+			Exception {
+		List<ConfigParamDto> paramList = null;
 		Object[] values = new Object[] { 1 };
 		paramList = getJdbcTemplate().query(QUERY_OSP_PARAMETER_SELECT, values,
 				new ConfigParamRowMapper());
-		if (!(paramList.size()>0)) {
+		if (null != paramList) {
+			if (!(paramList.size() > 0)) {
+				throw new OSPBusinessException("",
+						AppConstants.DB_NO_RECORD_FOUND_ERRCODE,
+						AppConstants.DB_NO_RECORD_FOUND_ERRMSG);
+			}
+		} else {
 			throw new OSPBusinessException("",
 					AppConstants.DB_NO_RECORD_FOUND_ERRCODE,
 					AppConstants.DB_NO_RECORD_FOUND_ERRMSG);
