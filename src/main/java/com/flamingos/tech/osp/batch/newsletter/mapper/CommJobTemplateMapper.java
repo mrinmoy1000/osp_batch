@@ -36,7 +36,7 @@ public class CommJobTemplateMapper implements RowMapper<CommJobTemplate> {
 
 		commJob.setCommJobId(rs.getInt("comm_job_id"));
 		commJob.setTemplateId(rs.getInt("comm_template_id"));
-		commJob.setTargetUser(rs.getInt("comm_target_user"));
+		commJob.setTargetUser(rs.getInt("target_user"));
 		commJob.setTargetUserCat(rs.getString("target_user_cat"));
 		commJob.setTargetUserSubCat(rs.getString("target_user_sub_cat"));
 		commJob.setEmailSubject(rs.getString("email_subject"));

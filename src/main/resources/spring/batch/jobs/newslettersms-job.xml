@@ -183,7 +183,7 @@
 				<property name="databaseType" value="mysql" />
 				<property name="selectClause"
 					value="select oprm_u.param_id as u_type,ocl.client_id,ocl.client_id as id,ocl.client_first_name as f_name,ocl.client_middle_name as m_name,
-							ocl.client_last_name as l_name,ocl.client_subsc_id as subsc_id ,ocl.status,
+							ocl.client_last_name as l_name,ocl.client_subs_id as subsc_id ,ocl.status,
 							oc.contact_phone,oc.contact_email,0 as cat_id,0 as sub_cat_id,ocl.dnd_activated_flag" />
 				<property name="fromClause"
 					value="from osp_client ocl
@@ -222,7 +222,7 @@
 			<value>
                 <![CDATA[
  			    select cj.comm_job_id,ct.comm_template_id,ct.temp_name,ct.comm_channel_id,ct.temp_cat_id,ct.temp_sub_cat_id,ct.temp_is_editable,ct.temp_file_path,
-				cj.comm_target_user,cj.target_user_cat,cj.target_user_sub_cat,cj.target_user_status,cj.is_implicit_job,cj.email_subject,cj.msg_content,cj.image_url,cj.job_date,cj.job_status
+				cj.target_user,cj.target_user_cat,cj.target_user_sub_cat,cj.target_user_status,cj.is_implicit_job,cj.email_subject,cj.msg_content,cj.image_url,cj.job_date,cj.job_status
 				from osp_comm_template ct 
 				join osp_comm_job cj on ct.comm_template_id=cj.comm_template_id
 				where ct.active_status=1 and 

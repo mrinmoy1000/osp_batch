@@ -126,15 +126,6 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate> {
 				allClientJobTempList.add(oCommJobTemplate);
 			}
 		}
-		if(CommTemplateBuffer.getCientJobStatusSet().isEmpty()){
-			CommTemplateBuffer.getCientJobStatusSet().add(0);
-		}
-		if(CommTemplateBuffer.getProfessionalJobStatusSet().isEmpty()){
-			CommTemplateBuffer.getProfessionalJobStatusSet().add(0);
-		}
-		if(CommTemplateBuffer.getProfessionalJobSubCatSet().isEmpty()){
-			CommTemplateBuffer.getProfessionalJobSubCatSet().add(0);
-		}
 	}
 
 }
