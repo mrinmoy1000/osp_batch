@@ -21,23 +21,15 @@
 	</properties>
 
 	<dependencies>
-		<!-- <dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-			<scope>runtime</scope>
-		</dependency> -->
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>${log4j.version}</version> <scope>runtime</scope> </dependency> -->
 		<!-- Spring Core -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring.version}</version>
-			<!-- <exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions> -->
+			<!-- <exclusions> <exclusion> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> 
+				</exclusion> </exclusions> -->
 		</dependency>
 
 		<!-- Spring jdbc, for database -->
@@ -72,7 +64,13 @@
 			<artifactId>spring-batch-infrastructure</artifactId>
 			<version>${spring.batch.version}</version>
 		</dependency>
-
+		<!--Mail dependency -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<!--Mail dependency -->
 		<!-- Spring Batch unit test -->
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
@@ -111,7 +109,7 @@
 			</exclusions>
 			<type>jar</type>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
