@@ -4,6 +4,9 @@ import java.util.Date;
 
 public class Mail {
 
+  /**
+   * 
+   */
   private String mailFrom;
 
   private String mailTo;
