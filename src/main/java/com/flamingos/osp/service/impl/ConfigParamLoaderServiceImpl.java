@@ -8,19 +8,19 @@ import com.flamingos.osp.dao.ConfigLoaderDao;
 import com.flamingos.osp.dto.ConfigParamDto;
 import com.flamingos.osp.service.ConfigParamLoaderService;
 
-public class ConfigParamLoaderServiceImpl implements ConfigParamLoaderService{
-	
-	@Autowired
-	private ConfigLoaderDao configLoaderDao;
+public class ConfigParamLoaderServiceImpl implements ConfigParamLoaderService {
 
-	@Override
-	public List<ConfigParamDto> loadConfigParam() throws Exception {
-		return getConfigLoaderDao().loadConfigParam();
-	}
+  @Autowired
+  private ConfigLoaderDao configLoaderDao;
 
-	public ConfigLoaderDao getConfigLoaderDao() {
-		return configLoaderDao;
-	}
+  @Override
+  public List<ConfigParamDto> loadConfigParam() throws Exception {
+    return getConfigLoaderDao().loadConfigParam();
+  }
+
+  public ConfigLoaderDao getConfigLoaderDao() {
+    return configLoaderDao;
+  }
 
 
 }

@@ -18,6 +18,9 @@
 		<mysql.driver.version>5.1.38</mysql.driver.version>
 		<junit.version>4.11</junit.version>
 		<log4j.version>1.2.17</log4j.version>
+		<velocity.version>1.7</velocity.version>
+		<java.mail.version>1.4.7</java.mail.version>
+		<spring.convext.support.version>4.2.4.RELEASE</spring.convext.support.version>
 	</properties>
 
 	<dependencies>
@@ -66,10 +69,21 @@
 		</dependency>
 		<!--Mail dependency -->
 		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${velocity.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>1.4</version>
+			<version>${java.mail.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.convext.support.version}</version>
+		</dependency>
+
 		<!--Mail dependency -->
 		<!-- Spring Batch unit test -->
 		<dependency>

@@ -11,21 +11,22 @@
 	http://www.springframework.org/schema/context 
 	http://www.springframework.org/schema/context/spring-context.xsd ">
 
-    <import resource="../config/applicationContext-configloader.xml"/>
+	<import resource="../config/applicationContext-configloader.xml" />
 	<!-- spring batch core settings -->
 	<import resource="../config/spring-batch-context.xml" />
 
 	<!-- database settings -->
 	<import resource="../config/spring-batch-datasource.xml" />
 
+	<!-- Email Settings -->
+	<import resource="../config/applicationContext-email.xml" />
+
 	<context:component-scan base-package="com.flamingos.osp.batch.newsletter" />
 
 	<!-- partitioner job -->
 	<batch:job id="partitionNewsLetterSmsJob" job-repository="jobRepository">
-	    <!-- Cash parameter data. -->
-	    <!-- <batch:split id="cashParameter">
-	        
-	    </batch:split> -->
+		<!-- Cash parameter data. -->
+		<!-- <batch:split id="cashParameter"> </batch:split> -->
 		<!-- Cache Email/SMS Templates based on userType,role and status -->
 		<batch:step id="cacheTemplate" next="masterStepPartitionedProfessional">
 			<batch:tasklet>
@@ -49,13 +50,11 @@
 				<batch:handler grid-size="${osp.batch.newsletter.client.gridsize}"
 					task-executor="taskExecutor" />
 			</batch:partition>
-			<!-- <batch:listeners>
-			    <batch:listener></batch:listener>
-			</batch:listeners> -->
+			<!-- <batch:listeners> <batch:listener></batch:listener> </batch:listeners> -->
 		</batch:step>
 		<!-- Update job Status -->
 		<batch:listeners>
-		    <batch:listener ref="newsLetterJobListener"/>
+			<batch:listener ref="newsLetterJobListener" />
 		</batch:listeners>
 	</batch:job>
 
@@ -140,8 +139,10 @@
 			<map>
 				<entry key="fromId" value="#{stepExecutionContext[fromId]}" />
 				<entry key="toId" value="#{stepExecutionContext[toId]}" />
-				<entry key="professionalStatus" value="#{@commTemplateBuffer.getProfessionalJobStatusSet()}" />
-				<entry key="professionalSubCat" value="#{@commTemplateBuffer.getProfessionalJobSubCatSet()}" />
+				<entry key="professionalStatus"
+					value="#{@commTemplateBuffer.getProfessionalJobStatusSet()}" />
+				<entry key="professionalSubCat"
+					value="#{@commTemplateBuffer.getProfessionalJobSubCatSet()}" />
 			</map>
 		</property>
 		<property name="pageSize" value="#{stepExecutionContext[pageSize]}" />
@@ -242,7 +243,8 @@
 		class="com.flamingos.tech.osp.batch.newsletter.writer.CommTemplateWriter" />
 	<bean id="commTemplateBuffer" class="com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer"
 		scope="singleton" />
-	<bean id="newsLetterJobListener" class="com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener"></bean>
+	<bean id="newsLetterJobListener"
+		class="com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener"></bean>
 	<!-- Template Specific beans end -->
 
 </beans>
