@@ -46,23 +46,10 @@ public class EmailGateway {
 				message.setRecipients(Message.RecipientType.TO, toAddresses);
 				message.setSubject(mail.getMailSubject());
 
-				// FileDataSource myFile = new FileDataSource (new File
-				// ("C:\\Users\\adas7\\Desktop\\BLE\\images\\test.jpg"));
-				// http://stackoverflow.com/questions/18941773/how-to-add-image-in-email-velocity-transformer-templates-from-classpath
-				// message.
-				// message.setOutboundProperty("logo", myFile);
-
 				Template template = velocityEngine.getTemplate(mail
 						.getTemplateName());
-
 				VelocityContext velocityContext = new VelocityContext();
-				// velocityContext.put("image1",
-				// "C:\\Users\\adas7\\Desktop\\BLE\\images\\test.jpg");
-				velocityContext.put("lastName", "Das");
-				velocityContext.put("firstName", "Arijit");
-
 				StringWriter stringWriter = new StringWriter();
-
 				template.merge(velocityContext, stringWriter);
 				Map<String, String> mapInlineImages = mail.getMapInlineImages();
 
@@ -89,11 +76,9 @@ public class EmailGateway {
 						} catch (IOException ex) {
 							ex.printStackTrace();
 						}
-
 						multipart.addBodyPart(imagePart);
 					}
 				}
-
 				message.setContent(multipart);
 
 				// message.setText(stringWriter.toString());
