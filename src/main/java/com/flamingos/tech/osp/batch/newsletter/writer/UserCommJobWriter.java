@@ -89,7 +89,7 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
               oMail.setTemplateName(oCommTemplate.getTemplateFileName());
               oMail.setMailTo(oUser.getEmailId());
               oMail.setMailFrom(mailFromAddress);
-
+              oMail.getMapInlineImages().put("image1", oCommJob.getImageUrl());
               emailGateway.sendMail(oMail);
               CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
                   .incrementProcessedCount();

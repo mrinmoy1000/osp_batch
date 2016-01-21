@@ -1,6 +1,7 @@
 package com.flamingos.osp.email;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Mail {
@@ -24,7 +25,7 @@ public class Mail {
 
 	private String contentType;
 
-	private Map<String, String> mapInlineImages;
+	private Map<String, String> mapInlineImages=new HashMap<String, String>();
 
 	public Mail() {
 		contentType = "text/html";

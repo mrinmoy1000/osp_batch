@@ -82,6 +82,4 @@ public class ConfigParamBean {
 	public Map<String, List<ConfigParamDto>> getMapByParamCode() {
 		return mapByParamCode;
 	}
-	
-
 }
