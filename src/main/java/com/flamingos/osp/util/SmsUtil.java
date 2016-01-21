@@ -18,59 +18,56 @@ import org.w3c.dom.NodeList;
 @Configuration
 @PropertySource("classpath:osp.properties")
 public class SmsUtil {
-	@Value("${sms.userid}")
-	private String userId;
-	@Value("${sms.password}")
-	private String password;
+  @Value("${sms.userid}")
+  private String userId;
+  @Value("${sms.password}")
+  private String password;
 
-	public String sendSms(SmsBean smsBean)
-	{
-		
-		
-		String responseMessage;
-		try {
-			
-			String requestUrl = "http://sms.ismilez.in/sendsms.jsp?user="
-					+ URLEncoder.encode(userId, "UTF-8") + "&" + "password="
-					+ URLEncoder.encode(password, "UTF-8") + "&mobiles="
-					+ URLEncoder.encode(smsBean.getRecipient(), "UTF-8") + "&sms="
-					+ URLEncoder.encode(smsBean.getMessage(), "UTF-8") + "&senderid=CCGSPL";
-			URL url = new URL(requestUrl);
-			HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-			responseMessage = uc.getResponseMessage();
+  public String sendSms(SmsBean smsBean) {
 
-			//Using DocumentBuilderFactory to read the xml from response
-			
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder(); 
-			Document doc = (Document) db.parse(uc.getInputStream());
-			uc.disconnect();
-			
-			Element docEle = doc.getDocumentElement(); //Root element of the xml
-			NodeList nodes = docEle.getChildNodes();   //list of child nodes
-			
-			for(int i=0; i<nodes.getLength(); i++){
-				  Node node = nodes.item(i);
 
-				  if (node.getNodeType() == Node.ELEMENT_NODE) {
+    String responseMessage;
+    try {
 
-					//  Response updated here if error occurres 
-					  if (node.getNodeName().equals("error"))
-					  {
-						  responseMessage = "Error";
-					  }
-										
-					}
-				}
-			
-	
-			
-			
-		} catch (Exception ex) {
-			responseMessage = ex.getMessage();
+      String requestUrl =
+          "http://sms.ismilez.in/sendsms.jsp?user=" + URLEncoder.encode(userId, "UTF-8") + "&"
+              + "password=" + URLEncoder.encode(password, "UTF-8") + "&mobiles="
+              + URLEncoder.encode(smsBean.getRecipient(), "UTF-8") + "&sms="
+              + URLEncoder.encode(smsBean.getMessage(), "UTF-8") + "&senderid=CCGSPL";
+      URL url = new URL(requestUrl);
+      HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+      responseMessage = uc.getResponseMessage();
 
-		}
-		return responseMessage;
-	}
-	
+      // Using DocumentBuilderFactory to read the xml from response
+
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = (Document) db.parse(uc.getInputStream());
+      uc.disconnect();
+
+      Element docEle = doc.getDocumentElement(); // Root element of the xml
+      NodeList nodes = docEle.getChildNodes(); // list of child nodes
+
+      for (int i = 0; i < nodes.getLength(); i++) {
+        Node node = nodes.item(i);
+
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+
+          // Response updated here if error occurres
+          if (node.getNodeName().equals("error")) {
+            responseMessage = "Error";
+          }
+
+        }
+      }
+
+
+
+    } catch (Exception ex) {
+      responseMessage = ex.getMessage();
+
+    }
+    return responseMessage;
+  }
+
 }
