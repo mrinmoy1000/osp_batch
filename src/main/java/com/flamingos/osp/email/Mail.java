@@ -1,111 +1,122 @@
 package com.flamingos.osp.email;
 
 import java.util.Date;
+import java.util.Map;
 
 public class Mail {
 
-  /**
+	/**
    * 
    */
-  private String mailFrom;
+	private String mailFrom;
 
-  private String mailTo;
+	private String mailTo;
 
-  private String mailCc;
+	private String mailCc;
 
-  private String mailBcc;
+	private String mailBcc;
 
-  private String mailSubject;
+	private String mailSubject;
 
-  private String mailContent;
+	private String mailContent;
 
-  private String templateName;
+	private String templateName;
 
-  private String contentType;
+	private String contentType;
 
-  public Mail() {
-    contentType = "text/html";
-  }
+	private Map<String, String> mapInlineImages;
 
-  public String getContentType() {
-    return contentType;
-  }
+	public Mail() {
+		contentType = "text/html";
+	}
 
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
-  }
+	public String getContentType() {
+		return contentType;
+	}
 
-  public String getMailBcc() {
-    return mailBcc;
-  }
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
 
-  public String getTemplateName() {
-    return templateName;
-  }
+	public String getMailBcc() {
+		return mailBcc;
+	}
 
-  public void setTemplateName(String templateName) {
-    this.templateName = templateName;
-  }
+	public String getTemplateName() {
+		return templateName;
+	}
 
-  public void setMailBcc(String mailBcc) {
-    this.mailBcc = mailBcc;
-  }
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
 
-  public String getMailCc() {
-    return mailCc;
-  }
+	public void setMailBcc(String mailBcc) {
+		this.mailBcc = mailBcc;
+	}
 
-  public void setMailCc(String mailCc) {
-    this.mailCc = mailCc;
-  }
+	public String getMailCc() {
+		return mailCc;
+	}
 
-  public String getMailFrom() {
-    return mailFrom;
-  }
+	public void setMailCc(String mailCc) {
+		this.mailCc = mailCc;
+	}
 
-  public void setMailFrom(String mailFrom) {
-    this.mailFrom = mailFrom;
-  }
+	public String getMailFrom() {
+		return mailFrom;
+	}
 
-  public String getMailSubject() {
-    return mailSubject;
-  }
+	public void setMailFrom(String mailFrom) {
+		this.mailFrom = mailFrom;
+	}
 
-  public void setMailSubject(String mailSubject) {
-    this.mailSubject = mailSubject;
-  }
+	public String getMailSubject() {
+		return mailSubject;
+	}
 
-  public String getMailTo() {
-    return mailTo;
-  }
+	public void setMailSubject(String mailSubject) {
+		this.mailSubject = mailSubject;
+	}
 
-  public void setMailTo(String mailTo) {
-    this.mailTo = mailTo;
-  }
+	public String getMailTo() {
+		return mailTo;
+	}
 
-  public Date getMailSendDate() {
-    return new Date();
-  }
+	public void setMailTo(String mailTo) {
+		this.mailTo = mailTo;
+	}
 
-  public String getMailContent() {
-    return mailContent;
-  }
+	public Date getMailSendDate() {
+		return new Date();
+	}
 
-  public void setMailContent(String mailContent) {
-    this.mailContent = mailContent;
-  }
+	public String getMailContent() {
+		return mailContent;
+	}
 
-  @Override
-  public String toString() {
-    StringBuilder lBuilder = new StringBuilder();
-    lBuilder.append("Mail From:- ").append(getMailFrom());
-    lBuilder.append("Mail To:- ").append(getMailTo());
-    lBuilder.append("Mail Cc:- ").append(getMailCc());
-    lBuilder.append("Mail Bcc:- ").append(getMailBcc());
-    lBuilder.append("Mail Subject:- ").append(getMailSubject());
-    lBuilder.append("Mail Send Date:- ").append(getMailSendDate());
-    lBuilder.append("Mail Content:- ").append(getMailContent());
-    return lBuilder.toString();
-  }
+	public void setMailContent(String mailContent) {
+		this.mailContent = mailContent;
+	}
+
+	public Map<String, String> getMapInlineImages() {
+		return mapInlineImages;
+	}
+
+	public void setMapInlineImages(Map<String, String> mapInlineImages) {
+		this.mapInlineImages = mapInlineImages;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder lBuilder = new StringBuilder();
+		lBuilder.append("Mail From:- ").append(getMailFrom());
+		lBuilder.append("Mail To:- ").append(getMailTo());
+		lBuilder.append("Mail Cc:- ").append(getMailCc());
+		lBuilder.append("Mail Bcc:- ").append(getMailBcc());
+		lBuilder.append("Mail Subject:- ").append(getMailSubject());
+		lBuilder.append("Mail Send Date:- ").append(getMailSendDate());
+		lBuilder.append("Mail Content:- ").append(getMailContent());
+		return lBuilder.toString();
+	}
 
 }
