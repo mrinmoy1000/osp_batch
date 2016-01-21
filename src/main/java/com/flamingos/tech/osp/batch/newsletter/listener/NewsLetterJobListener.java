@@ -13,21 +13,29 @@ import org.springframework.stereotype.Component;
  */
 public class NewsLetterJobListener implements JobExecutionListener {
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.core.JobExecutionListener#beforeJob(org.springframework.batch.core.JobExecution)
-	 */
-	public void beforeJob(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
-		System.out.println("Newsletter Job Starting");
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.springframework.batch.core.JobExecutionListener#beforeJob(org.springframework.batch.core
+   * .JobExecution)
+   */
+  public void beforeJob(JobExecution jobExecution) {
+    // TODO Auto-generated method stub
+    System.out.println("Newsletter Job Starting");
+  }
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.core.JobExecutionListener#afterJob(org.springframework.batch.core.JobExecution)
-	 */
-	public void afterJob(JobExecution jobExecution) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("Newsletter Job Executed");
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.springframework.batch.core.JobExecutionListener#afterJob(org.springframework.batch.core
+   * .JobExecution)
+   */
+  public void afterJob(JobExecution jobExecution) {
+    // TODO Auto-generated method stub
+
+    System.out.println("Newsletter Job Executed");
+  }
 
 }
