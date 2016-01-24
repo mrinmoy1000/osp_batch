@@ -17,8 +17,8 @@ import com.flamingos.osp.bean.ConfigParamBean;
 import com.flamingos.osp.dto.ConfigParamDto;
 import com.flamingos.osp.email.EmailGateway;
 import com.flamingos.osp.email.Mail;
-import com.flamingos.osp.sms.SmS;
-import com.flamingos.osp.sms.SmsGateWay;
+import com.flamingos.osp.sms.SMS;
+import com.flamingos.osp.sms.SmsGateway;
 import com.flamingos.osp.util.AppConstants;
 import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.model.User;
@@ -40,7 +40,7 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
   @Autowired
   private EmailGateway emailGateway;
   @Autowired
-  private SmsGateWay smsGateway;
+  private SmsGateway smsGateway;
   @Value("${mail.smtp.sender.from}")
   private String mailFromAddress;
 
@@ -104,7 +104,7 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
             }
           } else if (oCommTemplate.getCommChannelId() == oSmsChannel.getParameterid()) {
             // SEND SMS
-            SmS sms = new SmS();
+            SMS sms = new SMS();
             sms.setRecipient(oUser.getPhoneNumber());
             sms.setMessage(oCommJob.getContent().toString());
             sms.setTemplateName(oCommTemplate.getTemplateFileName());
