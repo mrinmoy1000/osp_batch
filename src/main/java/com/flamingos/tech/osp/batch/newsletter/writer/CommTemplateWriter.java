@@ -21,7 +21,6 @@ import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.model.JobStatusModel;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJob;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJobTemplate;
-import com.flamingos.tech.osp.batch.newsletter.model.CommTemplate;
 
 /**
  * @author Mrinmoy
@@ -69,7 +68,6 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate>, Initiali
     }
 
     for (CommJobTemplate oCommJobTemplate : oCommJobTemplates) {
-      CommTemplate oCommTemplate = oCommJobTemplate.getCommTemplate();
       CommJob oCommJob = oCommJobTemplate.getCommJob();
       String jobTemplateKey = oCommJob.getTemplateId() + "_" + oCommJob.getTemplateId();
       CommTemplateBuffer.getJobTemplateIdMap().put(jobTemplateKey, oCommJobTemplate);

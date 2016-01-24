@@ -101,13 +101,21 @@ public class JobStatusModel {
   public int incrementFailedCount() {
     return this.failedCount.incrementAndGet();
   }
-
-  public AtomicInteger getTotalNoToSent() {
-    return totalNoToSent;
+  
+  /**
+   * @return the totalNoToSent
+   */
+  public int getTotalNoToSent() {
+    return totalNoToSent.intValue();
   }
 
-  public void setTotalNoToSent(AtomicInteger totalNoToSent) {
-    this.totalNoToSent = totalNoToSent;
+  /**
+   *Increments Total number of email/sms to send for the job id.
+   *
+   * @return
+   */
+  public int incrementTotalNoToSent() {
+    return this.totalNoToSent.incrementAndGet();
   }
 
 }

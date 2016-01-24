@@ -21,10 +21,13 @@ public class AppConstants {
   public static String PARAM_NAME_EMAIL = "EMAIL";
   public static String PARAM_NAME_SMS = "SMS";
   public static String PARAM_NAME_MAIL = "MAIL";
-
-
+  public static String PARAM_CODE_JOB_STATUS = "JOB_STATUS";
+  public static String PARAM_NAME_INITIAL = "INITIAL";
+  public static String PARAM_NAME_FAILES = "FAILED";
+  public static String PARAM_NAME_PROCESSED = "PROCESSED";
 
   public static String KEY_ALL = "ALL";
-  public static String MESSAGE_COMM_JOB_INITIAL = "INITIAL";
-  public static String MESSAGE_COMM_JOB_FAILED = "FAILED";
+  public static String VTEMP_QUALIFIER = "newMessage";
+  
+  public static String MESSAGE_COMM_JOB_INITIAL="INITIAL";
 }

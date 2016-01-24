@@ -73,10 +73,7 @@ public class UserCommProcessor implements ItemProcessor<User, UserCommunication>
     if (user.getUserType() == oProfessionalUser.getParameterid()) {
       Map<Integer, List<CommJobTemplate>> profTemplates =
           CommTemplateBuffer.getTemplateForProfessionals();
-      /*
-       * if (null != profTemplates.get("ALL")) {// All Segment Templates.
-       * applicabelTemplates.addAll(profTemplates.get("ALL")); }
-       */
+
       if (null != profTemplates.get(user.getSubCategoryId())) {
         applicabelTemplates.addAll(profTemplates.get(user.getSubCategoryId()));
       }
@@ -86,10 +83,6 @@ public class UserCommProcessor implements ItemProcessor<User, UserCommunication>
       if (null != clientTemplates.get(AppConstants.KEY_ALL)) {// All Segment Templates.
         applicabelTemplates.addAll(clientTemplates.get(AppConstants.KEY_ALL));
       }
-      /*
-       * String key = user.getRoleId() + ""; if (null != clientTemplates.get(key)) {
-       * applicabelTemplates.addAll(clientTemplates.get(key)); }
-       */
     }
     if (!applicabelTemplates.isEmpty()) {
       finalApplicabelTemplates = discardUnsubscribedAndRepeatTemplate(user, applicabelTemplates);
@@ -104,7 +97,6 @@ public class UserCommProcessor implements ItemProcessor<User, UserCommunication>
 
   private List<CommJobTemplate> discardUnsubscribedAndRepeatTemplate(User user,
       List<CommJobTemplate> applicabelTemplates) {
-    // TODO.
     List<CommJobTemplate> finalApplicableTemplates = new ArrayList<CommJobTemplate>();
     for (CommJobTemplate oJobTemplate : applicabelTemplates) {
       CommJob oCommJob = oJobTemplate.getCommJob();
@@ -113,15 +105,14 @@ public class UserCommProcessor implements ItemProcessor<User, UserCommunication>
           user.getStatus()))
           && oCommJob.getLstTargetUserStatus().contains(user.getStatus())) {
         if (oTemplate.getCommChannelId() == oEmailChannel.getParameterid()
-            && user.getSubscriptionsCat().contains(oTemplate.getTemplateSubCatId())) {// fetch from
-          // parameter
-          // cache
+            && user.getSubscriptionsCat().contains(oTemplate.getTemplateSubCatId())) {
           finalApplicableTemplates.add(oJobTemplate);
         } else if (oTemplate.getCommChannelId() == oSmsChannel.getParameterid()
-            && !user.isDndActivated()) {// fetch from parameter
-          // cache
+            && !user.isDndActivated()) {
           finalApplicableTemplates.add(oJobTemplate);
         }
+
+        CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId()).incrementTotalNoToSent();
       }
     }
     return finalApplicableTemplates;

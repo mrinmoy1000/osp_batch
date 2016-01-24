@@ -14,12 +14,8 @@
 		<property name="databaseType" value="mysql" />
 	</bean>
 	<!-- stored job-meta in memory -->
-<!--
-  <bean id="jobRepository"
-    class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
-    <property name="transactionManager" ref="transactionManager" />
-  </bean>
-  -->
+	<!-- <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean"> 
+		<property name="transactionManager" ref="transactionManager" /> </bean> -->
 	<bean id="transactionManager"
 		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
 

@@ -1,26 +1,23 @@
 package com.flamingos.osp.email;
 
 import java.io.IOException;
-import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.ui.velocity.VelocityEngineUtils;
+
+import com.flamingos.osp.util.AppConstants;
 
 public class EmailGateway {
   private JavaMailSender mailSender;
@@ -34,25 +31,26 @@ public class EmailGateway {
     this.velocityEngine = velocityEngine;
   }
 
-  public void sendMail(final Mail mail) throws AddressException {
+  public void sendMail(final Mail mail) throws Exception {
+
 
     MimeMessagePreparator preparator = new MimeMessagePreparator() {
 
+      @SuppressWarnings({"unchecked", "rawtypes"})
       public void prepare(MimeMessage message) throws Exception {
-        // TODO Auto-generated method stub
         message.setFrom(new InternetAddress(mail.getMailFrom()));
         InternetAddress[] toAddresses = {new InternetAddress(mail.getMailTo())};
         message.setRecipients(Message.RecipientType.TO, toAddresses);
         message.setSubject(mail.getMailSubject());
-
-        Template template = velocityEngine.getTemplate(mail.getTemplateName());
-        VelocityContext velocityContext = new VelocityContext();
-        StringWriter stringWriter = new StringWriter();
-        template.merge(velocityContext, stringWriter);
+        Map model = new HashMap();
+        model.put(AppConstants.VTEMP_QUALIFIER, mail);
+        String htmlBody =
+            VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mail.getTemplateName(),
+                "UTF-8", model);
         Map<String, String> mapInlineImages = mail.getMapInlineImages();
 
         MimeBodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent(stringWriter.toString(), "text/html");
+        messageBodyPart.setContent(htmlBody, "text/html");
 
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(messageBodyPart);
@@ -76,13 +74,10 @@ public class EmailGateway {
           }
         }
         message.setContent(multipart);
-
-        // message.setText(stringWriter.toString());
       }
     };
-
-    // SimpleMailMessage message = new SimpleMailMessage();
     mailSender.send(preparator);
+
   }
 
 }
