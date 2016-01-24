@@ -20,14 +20,17 @@ import org.w3c.dom.NodeList;
 
 import com.flamingos.osp.util.AppConstants;
 
-public class SmsGateWay {
+public class SmsGateway {
 
   @Value("${sms.url}")
   private String smsUrl;
+  
   @Value("${sms.userid}")
   private String userId;
+  
   @Value("${sms.password}")
   private String password;
+  
   private VelocityEngine velocityEngine;
 
 
@@ -37,7 +40,7 @@ public class SmsGateWay {
 
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  public String sendSms(SmS sms) {
+  public String sendSms(SMS sms) {
     String responseMessage;
 
     Map model = new HashMap();
