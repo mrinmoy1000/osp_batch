@@ -17,6 +17,8 @@ import com.flamingos.osp.bean.ConfigParamBean;
 import com.flamingos.osp.dto.ConfigParamDto;
 import com.flamingos.osp.email.EmailGateway;
 import com.flamingos.osp.email.Mail;
+import com.flamingos.osp.sms.SmS;
+import com.flamingos.osp.sms.SmsGateWay;
 import com.flamingos.osp.util.AppConstants;
 import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.model.User;
@@ -27,7 +29,7 @@ import com.flamingos.tech.osp.batch.newsletter.model.UserCommunication;
 
 /**
  * @author Mrinmoy
- *
+ * 
  */
 public class UserCommJobWriter implements ItemWriter<UserCommunication>, InitializingBean {
 
@@ -37,6 +39,8 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
   private ConfigParamBean configParamBean;
   @Autowired
   private EmailGateway emailGateway;
+  @Autowired
+  private SmsGateWay smsGateway;
   @Value("${mail.smtp.sender.from}")
   private String mailFromAddress;
 
@@ -100,6 +104,11 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
             }
           } else if (oCommTemplate.getCommChannelId() == oSmsChannel.getParameterid()) {
             // SEND SMS
+            SmS sms = new SmS();
+            sms.setRecipient(oUser.getPhoneNumber());
+            sms.setMessage(oCommJob.getContent().toString());
+            sms.setTemplateName(oCommTemplate.getTemplateFileName());
+            smsGateway.sendSms(sms);
             System.out.println("Sending SMS for User type : " + oUser.getUserType() + " ,UserId: "
                 + oUser.getId() + " , Job Id : " + oCommJob.getCommJobId());
           }
