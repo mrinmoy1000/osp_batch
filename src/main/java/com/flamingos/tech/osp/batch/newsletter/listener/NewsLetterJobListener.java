@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -45,6 +46,10 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
   
   ConfigParamDto oJobStatusProcessed = null;
   ConfigParamDto oJobStatusFailed = null;
+  
+  private static final Logger logger = Logger.getLogger(NewsLetterJobListener.class);
+  
+  
 
   /*
    * (non-Javadoc)
@@ -55,7 +60,7 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
    */
   public void beforeJob(JobExecution jobExecution) {
     // TODO Auto-generated method stub
-    System.out.println("Newsletter Job Starting");
+    logger.info("Newsletter Job Starting");
   }
 
   /*
@@ -89,7 +94,7 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
             updateJobStatus(jobStatusModel.getCommJobId(),oJobStatusFailed.getParameterid());
           }
         }
-        System.out.println("Newsletter Job Executed");
+         logger.info("Newsletter Job Executed");
       } else {
 
       }

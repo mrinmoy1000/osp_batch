@@ -138,7 +138,7 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate>, Initiali
         allClientJobTempList.add(oCommJobTemplate);
       }
     }
-    System.out.println("");
+
   }
 
   @Override

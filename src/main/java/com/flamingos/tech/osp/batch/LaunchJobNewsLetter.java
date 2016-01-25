@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
@@ -12,31 +13,39 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener;
+
 public class LaunchJobNewsLetter {
-  public static void main(String[] args) {
+	private static final Logger logger = Logger
+			.getLogger(LaunchJobNewsLetter.class);
 
-    String[] springConfig = {"spring/batch/jobs/newslettersms-job.xml"};
+	public static void main(String[] args) {
 
-    ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
-    Map<String, JobParameter> jobParams = new HashMap<String, JobParameter>();
-    if (args.length == 0) {
-      jobParams.put("param_jobStartTime", new JobParameter(new Date()));
-    } else {
-      jobParams.put("job_execution_id", new JobParameter(args[0]));
-    }
-    JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
-    Job job = (Job) context.getBean("partitionNewsLetterSmsJob");
+		String[] springConfig = { "spring/batch/jobs/newslettersms-job.xml" };
 
-    try {
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				springConfig);
+		Map<String, JobParameter> jobParams = new HashMap<String, JobParameter>();
+		if (args.length == 0) {
+			jobParams.put("param_jobStartTime", new JobParameter(new Date()));
+		} else {
+			jobParams.put("job_execution_id", new JobParameter(args[0]));
+		}
+		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
+		Job job = (Job) context.getBean("partitionNewsLetterSmsJob");
 
-      JobExecution execution = jobLauncher.run(job, new JobParameters(jobParams));
-      System.out.println("Exit Status : " + execution.getStatus());
+		try {
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+			JobExecution execution = jobLauncher.run(job, new JobParameters(
+					jobParams));
+			logger.info("Exit Status : " + execution.getStatus());
 
-    System.out.println("Done");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getCause());
+		}
 
-  }
+		logger.info("Done");
+
+	}
 }
