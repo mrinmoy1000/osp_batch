@@ -223,15 +223,18 @@
 		<property name="sql">
 			<value>
                 <![CDATA[
- 			    select cj.comm_job_id,ct.comm_template_id,ct.temp_name,ct.comm_channel_id,ct.temp_cat_id,ct.temp_sub_cat_id,ct.temp_is_editable,ct.temp_file_path,
-				cj.target_user,cj.target_user_cat,cj.target_user_sub_cat,cj.target_user_status,cj.is_implicit_job,cj.email_subject,cj.msg_content,cj.image_url,cj.job_date,cj.job_status
-				from OSP_COMM_TEMPLATE ct 
-				join OSP_COMM_JOB cj on ct.comm_template_id=cj.comm_template_id
-				where ct.active_status=1 and 
-				((cj.job_status=(select param_id from OSP_PARAMETER where param_code='JOB_STATUS' and param_name='INITIAL')
-				and curdate()=cj.job_date) or cj.is_implicit_job=1)   
-				and ct.temp_cat_id=(select param_id from OSP_PARAMETER where param_code='COMM_TEMPLATE_CATEGORY' and param_name='NEWSLETTER')
-                ]]>
+				   select cj.comm_job_id,ct.comm_template_id,ct.temp_name,ct.comm_channel_id,ct.temp_cat_id,ct.temp_sub_cat_id,ct.temp_is_editable,ct.temp_file_path,
+					cj.target_user,cj.target_user_cat,cj.target_user_sub_cat,cj.target_user_status,cj.is_implicit_job,cj.email_subject,cj.msg_content,cj.image_url,cj.job_date,cj.job_status
+					from OSP_COMM_TEMPLATE ct 
+					join OSP_COMM_JOB cj on ct.comm_template_id=cj.comm_template_id
+					where ct.active_status=1 and 
+					((cj.job_status=(select param_id from OSP_PARAMETER where param_code='JOB_STATUS' and param_name='INITIAL')
+					and curdate()=cj.job_date) or (cj.is_implicit_job=1 && (cj.updated_ts is null or 
+					cj.job_status=(select param_id from OSP_PARAMETER where param_code='JOB_STATUS' and param_name='FAILED')
+					or (DATEDIFF(cj.updated_ts,sysdate()) >= ${osp.batch.newsletter.implicitjob.frequency.days} ))))
+					and ct.temp_cat_id=(select param_id from OSP_PARAMETER where param_code='COMM_TEMPLATE_CATEGORY' and param_name='NEWSLETTER');
+					
+				]]>
 			</value>
 		</property>
 		<property name="rowMapper" ref="commJobTemplateMapper" />
