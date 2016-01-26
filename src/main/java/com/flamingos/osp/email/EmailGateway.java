@@ -1,7 +1,9 @@
 package com.flamingos.osp.email;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +34,6 @@ public class EmailGateway {
   }
 
   public void sendMail(final Mail mail) throws Exception {
-
 
     MimeMessagePreparator preparator = new MimeMessagePreparator() {
 
@@ -76,8 +77,73 @@ public class EmailGateway {
         message.setContent(multipart);
       }
     };
-    mailSender.send(preparator);
 
+    mailSender.send(preparator);
+  }
+
+  /**
+   * This method sends emails in a bulk.
+   * 
+   * @param mails
+   */
+  public void sendBatchMail(List<Mail> mails) {
+    if (null != mails && !mails.isEmpty()) {
+      List<MimeMessagePreparator> lstMimeMessage = new ArrayList<MimeMessagePreparator>();
+      for (Mail oMail : mails) {
+        MimeMessagePreparator prepartor = createMimeMessagePreparator(oMail);
+        lstMimeMessage.add(prepartor);
+      }
+      mailSender.send(lstMimeMessage.toArray(new MimeMessagePreparator[lstMimeMessage.size()]));
+    }
+  }
+
+  public MimeMessagePreparator createMimeMessagePreparator(final Mail mail) {
+
+    MimeMessagePreparator preparator = new MimeMessagePreparator() {
+
+      @SuppressWarnings({"unchecked", "rawtypes"})
+      public void prepare(MimeMessage message) throws Exception {
+
+        message.setFrom(new InternetAddress(mail.getMailFrom()));
+        InternetAddress[] toAddresses = {new InternetAddress(mail.getMailTo())};
+        message.setRecipients(Message.RecipientType.TO, toAddresses);
+        message.setSubject(mail.getMailSubject());
+        Map model = new HashMap();
+        model.put(AppConstants.VTEMP_QUALIFIER, mail);
+        String htmlBody =
+            VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, mail.getTemplateName(),
+                "UTF-8", model);
+        Map<String, String> mapInlineImages = mail.getMapInlineImages();
+
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setContent(htmlBody, "text/html");
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(messageBodyPart);
+
+        // adds inline image attachments
+        if (mapInlineImages != null && mapInlineImages.size() > 0) {
+          Set<String> setImageID = mapInlineImages.keySet();
+
+          for (String contentId : setImageID) {
+            MimeBodyPart imagePart = new MimeBodyPart();
+            imagePart.setHeader("Content-ID", "<" + contentId + ">");
+            imagePart.setDisposition(MimeBodyPart.INLINE);
+
+            String imageFilePath = mapInlineImages.get(contentId);
+            try {
+              imagePart.attachFile(imageFilePath);
+            } catch (IOException ex) {
+              ex.printStackTrace();
+            }
+            multipart.addBodyPart(imagePart);
+          }
+        }
+        message.setContent(multipart);
+      }
+    };
+
+    return preparator;
   }
 
 }

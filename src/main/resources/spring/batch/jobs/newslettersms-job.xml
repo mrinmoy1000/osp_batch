@@ -97,7 +97,7 @@
 		class="com.flamingos.tech.osp.batch.newsletter.partitioner.RangePartitionar"
 		scope="step">
 		<property name="rangeSql"
-			value="select coalesce(min(opr.prof_id),0) min_id,coalesce(max(opr.prof_id),0) max_id , count(1) tot_count from osp_professional opr
+			value="select coalesce(min(opr.prof_id),0) min_id,coalesce(max(opr.prof_id),0) max_id , count(1) tot_count from OSP_PROFESSIONAL opr
 			where opr.status in ( #{@commTemplateBuffer.getProfessionalJobStatusSet()} )" />
 		<property name="partingModule" value="PROFESSIONNAL_NEWSLETTER" />
 	</bean>
@@ -117,13 +117,13 @@
 							opr.prof_last_name as l_name,opr.prof_subsc_id as subsc_id,opr.status,opr.dnd_activated_flag,
 							oc.contact_phone,oc.contact_email,osc.cat_id as cat_id,opscm.sub_cat_id" />
 				<property name="fromClause"
-					value="from osp_professional opr
-							join osp_prof_contact_map opc on opr.prof_id=opc.prof_id and opc.active_status =1
-							join osp_prof_sub_cat_map opscm on opscm.prof_id=opr.prof_id and opscm.active_status=1
-							join osp_contact oc on oc.contact_id=opc.contact_id and oc.active_status=1
-							join osp_sub_category osc on osc.sub_cat_id=opscm.sub_cat_id and osc.active_status=1
-							join osp_parameter oprm on oprm.param_code ='CONTACT_TYPE' and oprm.param_name='REG_EMAIL_MOB' and oprm.active_status=1 and oprm.param_id=oc.contact_type
-							join osp_parameter oprmu on oprmu.param_code ='USER_TYPE' and oprmu.param_name='PREFESSIONAL' and oprmu.active_status=1" />
+					value="from OSP_PROFESSIONAL opr
+							join OSP_PROF_CONTACT_MAP opc on opr.prof_id=opc.prof_id and opc.active_status =1
+							join OSP_PROF_SUB_CAT_MAP opscm on opscm.prof_id=opr.prof_id and opscm.active_status=1
+							join OSP_CONTACT oc on oc.contact_id=opc.contact_id and oc.active_status=1
+							join OSP_SUB_CATEGORY osc on osc.sub_cat_id=opscm.sub_cat_id and osc.active_status=1
+							join OSP_PARAMETER oprm on oprm.param_code ='CONTACT_TYPE' and oprm.param_name='REG_EMAIL_MOB' and oprm.active_status=1 and oprm.param_id=oc.contact_type
+							join OSP_PARAMETER oprmu on oprmu.param_code ='USER_TYPE' and oprmu.param_name='PREFESSIONAL' and oprmu.active_status=1" />
 				<property name="whereClause">
 					<value>
 				        <![CDATA[
@@ -168,7 +168,7 @@
 		class="com.flamingos.tech.osp.batch.newsletter.partitioner.RangePartitionar"
 		scope="step">
 		<property name="rangeSql"
-			value="select coalesce(min(oc.client_id),0) min_id,coalesce(max(oc.client_id),0) max_id , count(1) tot_count from osp_client oc
+			value="select coalesce(min(oc.client_id),0) min_id,coalesce(max(oc.client_id),0) max_id , count(1) tot_count from OSP_CLIENT oc
 			where oc.status in ( #{@commTemplateBuffer.getCientJobStatusSet()} )" />
 		<property name="partingModule" value="CLIENT_NEWSLETTER" />
 	</bean>
@@ -188,11 +188,11 @@
 							ocl.client_last_name as l_name,ocl.client_subs_id as subsc_id ,ocl.status,
 							oc.contact_phone,oc.contact_email,0 as cat_id,0 as sub_cat_id,ocl.dnd_activated_flag" />
 				<property name="fromClause"
-					value="from osp_client ocl
-							join osp_client_contact_map occ on ocl.client_id=occ.client_id and occ.active_status=1
-							join osp_contact oc on oc.contact_id=occ.contact_id and oc.active_status=1
-							join osp_parameter oprm on oprm.param_code ='CONTACT_TYPE' and oprm.param_name='REG_EMAIL_MOB' and oprm.active_status=1 and oprm.param_id=oc.contact_type
-							join osp_parameter oprm_u on oprm_u.param_code ='USER_TYPE' and oprm_u.param_name='CLIENT' and oprm_u.active_status=1" />
+					value="from OSP_CLIENT ocl
+							join OSP_CLIENT_CONTACT_MAP occ on ocl.client_id=occ.client_id and occ.active_status=1
+							join OSP_CONTACT oc on oc.contact_id=occ.contact_id and oc.active_status=1
+							join OSP_PARAMETER oprm on oprm.param_code ='CONTACT_TYPE' and oprm.param_name='REG_EMAIL_MOB' and oprm.active_status=1 and oprm.param_id=oc.contact_type
+							join OSP_PARAMETER oprm_u on oprm_u.param_code ='USER_TYPE' and oprm_u.param_name='CLIENT' and oprm_u.active_status=1" />
 				<property name="whereClause">
 					<value>
 					    <![CDATA[
@@ -225,12 +225,12 @@
                 <![CDATA[
  			    select cj.comm_job_id,ct.comm_template_id,ct.temp_name,ct.comm_channel_id,ct.temp_cat_id,ct.temp_sub_cat_id,ct.temp_is_editable,ct.temp_file_path,
 				cj.target_user,cj.target_user_cat,cj.target_user_sub_cat,cj.target_user_status,cj.is_implicit_job,cj.email_subject,cj.msg_content,cj.image_url,cj.job_date,cj.job_status
-				from osp_comm_template ct 
-				join osp_comm_job cj on ct.comm_template_id=cj.comm_template_id
+				from OSP_COMM_TEMPLATE ct 
+				join OSP_COMM_JOB cj on ct.comm_template_id=cj.comm_template_id
 				where ct.active_status=1 and 
-				((cj.job_status=(select param_id from osp_parameter where param_code='JOB_STATUS' and param_name='INITIAL')
+				((cj.job_status=(select param_id from OSP_PARAMETER where param_code='JOB_STATUS' and param_name='INITIAL')
 				and curdate()=cj.job_date) or cj.is_implicit_job=1)   
-				and ct.temp_cat_id=(select param_id from osp_parameter where param_code='COMM_TEMPLATE_CATEGORY' and param_name='NEWSLETTER')
+				and ct.temp_cat_id=(select param_id from OSP_PARAMETER where param_code='COMM_TEMPLATE_CATEGORY' and param_name='NEWSLETTER')
                 ]]>
 			</value>
 		</property>

@@ -26,10 +26,10 @@ public class LaunchJobNewsLetter {
 		ApplicationContext context = new ClassPathXmlApplicationContext(
 				springConfig);
 		Map<String, JobParameter> jobParams = new HashMap<String, JobParameter>();
-		if (args.length == 0) {
+		if (args.length == 1) {
 			jobParams.put("param_jobStartTime", new JobParameter(new Date()));
 		} else {
-			jobParams.put("job_execution_id", new JobParameter(args[0]));
+			jobParams.put("job_execution_id", new JobParameter(args[1]));
 		}
 		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
 		Job job = (Job) context.getBean("partitionNewsLetterSmsJob");

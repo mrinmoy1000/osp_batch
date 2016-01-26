@@ -43,13 +43,13 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
 
   @Autowired
   private ConfigParamBean configParamBean;
-  
+
   ConfigParamDto oJobStatusProcessed = null;
   ConfigParamDto oJobStatusFailed = null;
-  
-  private static final Logger logger = Logger.getLogger(NewsLetterJobListener.class);
-  
-  
+
+  private static final Logger LOGGER = Logger.getLogger(NewsLetterJobListener.class);
+
+
 
   /*
    * (non-Javadoc)
@@ -60,7 +60,7 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
    */
   public void beforeJob(JobExecution jobExecution) {
     // TODO Auto-generated method stub
-    logger.info("Newsletter Job Starting");
+    LOGGER.info("Newsletter Job Starting");
   }
 
   /*
@@ -77,26 +77,31 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
       if (jobExecution.getExitStatus().equals(ExitStatus.COMPLETED)) {
         for (Entry<Integer, JobStatusModel> jobStatusModelEntry : jobMap) {
           JobStatusModel jobStatusModel = jobStatusModelEntry.getValue();
+          LOGGER.info("Job Id: " + jobStatusModelEntry.getKey() + " ,TotalNoToSend : "
+              + jobStatusModel.getTotalNoToSent() + " , Processed : "
+              + jobStatusModel.getProcessedCount() + " , Failed : "
+              + jobStatusModel.getFailedCount());
+
           if (jobStatusModel.getTotalNoToSent() == (jobStatusModel.getProcessedCount() + jobStatusModel
               .getFailedCount())) {
             // Total number to send count matches total failed and processed count.
             double successRatio =
-                ((double)jobStatusModel.getProcessedCount() / jobStatusModel.getTotalNoToSent()) * 100;
+                ((double) jobStatusModel.getProcessedCount() / jobStatusModel.getTotalNoToSent()) * 100;
             if (successRatio >= desiredSuccessPersentage) {
               // Update Job Status as processed.
-              updateJobStatus(jobStatusModel.getCommJobId(),oJobStatusProcessed.getParameterid());
+              updateJobStatus(jobStatusModel.getCommJobId(), oJobStatusProcessed.getParameterid());
             } else {
               // Update Job Status as Failed.
-              updateJobStatus(jobStatusModel.getCommJobId(),oJobStatusFailed.getParameterid());
+              updateJobStatus(jobStatusModel.getCommJobId(), oJobStatusFailed.getParameterid());
             }
           } else {
             // Update Job as Failed.
-            updateJobStatus(jobStatusModel.getCommJobId(),oJobStatusFailed.getParameterid());
+            updateJobStatus(jobStatusModel.getCommJobId(), oJobStatusFailed.getParameterid());
           }
         }
-         logger.info("Newsletter Job Executed");
+        LOGGER.info("Newsletter Job Executed");
       } else {
-
+        LOGGER.info("JOB Terminated Aborabtly Updating All Jobs to fail");
       }
     }
   }

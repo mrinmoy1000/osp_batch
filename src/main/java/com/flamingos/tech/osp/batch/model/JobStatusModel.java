@@ -78,12 +78,13 @@ public class JobStatusModel {
   }
 
   /**
-   * Increments Processed Count
+   * Increments Processed Count by delta
    * 
+   * @param delta
    * @return
    */
-  public int incrementProcessedCount() {
-    return this.processedCount.incrementAndGet();
+  public int incrementProcessedCount(int delta) {
+    return this.processedCount.getAndAdd(delta);
   }
 
   /**
@@ -94,14 +95,15 @@ public class JobStatusModel {
   }
 
   /**
-   * Increments Failed Count
+   * Increments Failed Count by delta
    * 
+   * @param delta
    * @return
    */
-  public int incrementFailedCount() {
-    return this.failedCount.incrementAndGet();
+  public int incrementFailedCount(int delta) {
+    return this.failedCount.getAndAdd(delta);
   }
-  
+
   /**
    * @return the totalNoToSent
    */
@@ -110,7 +112,7 @@ public class JobStatusModel {
   }
 
   /**
-   *Increments Total number of email/sms to send for the job id.
+   * Increments Total number of email/sms to send for the job id.
    *
    * @return
    */

@@ -99,10 +99,10 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		 <dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.15</version>
+			<version>${log4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.mail</groupId>
@@ -146,6 +146,78 @@
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.flamingos.tech.osp.batch.LaunchJobNewsLetter</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+					<excludes>
+						<exclude>osp_batch.properties</exclude>
+						<exclude>log4j.properties</exclude>
+					</excludes>
+
+					<outputDirectory>${project.build.directory}/OSP_BATCH_DIST</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/OSP_BATCH_DIST/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/OSP_BATCH_DIST</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>**/osp_batch.properties</include>
+										<include>**/log4j.properties</include>
+										<include>**/NewsLetterBatch.bat</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

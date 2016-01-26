@@ -3,7 +3,11 @@
  */
 package com.flamingos.tech.osp.batch.newsletter.writer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
@@ -12,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.mail.MailSendException;
+import org.springframework.mail.MailException;
 
 import com.flamingos.osp.bean.ConfigParamBean;
 import com.flamingos.osp.dto.ConfigParamDto;
@@ -23,7 +27,6 @@ import com.flamingos.osp.sms.SmsGateway;
 import com.flamingos.osp.util.AppConstants;
 import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.model.User;
-import com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJob;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJobTemplate;
 import com.flamingos.tech.osp.batch.newsletter.model.CommTemplate;
@@ -77,6 +80,7 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
 
   public void write(List<? extends UserCommunication> oCommunications) throws Exception {
     System.out.println("UserCommunication : " + oCommunications.size());
+    Map<Integer, List<Mail>> lstMailsJobMap = new HashMap<Integer, List<Mail>>();
     for (UserCommunication oUserComm : oCommunications) {
       User oUser = oUserComm.getoUser();
       List<CommJobTemplate> templates = oUserComm.getLstCommJobTemplate();
@@ -84,49 +88,57 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
         for (CommJobTemplate oTemplate : templates) {
           CommTemplate oCommTemplate = oTemplate.getCommTemplate();
           CommJob oCommJob = oTemplate.getCommJob();
-          logger.info("Processing User type : " + oUser.getUserType() + " ,UserId: "
-              + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId() + " , JobId : "
-              + oCommJob.getCommJobId() + " , Channel : " + oCommTemplate.getCommChannelId());
 
           if (oCommTemplate.getCommChannelId() == oEmailChannel.getParameterid()) {
             // SEND EMAIL
-            try {
+            logger.info("Preparing send Email for User type : " + oUser.getUserType() + " ,UserId: "
+                + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId() + " , Job Id : " + oCommJob.getCommJobId());
 
-              logger.info("Sending Email for User type : " + oUser.getUserType() + " ,UserId: "
-                  + oUser.getId() + " , Job Id : " + oCommJob.getCommJobId());
-
-              Mail oMail = new Mail();
-              oMail.setMailSubject(oCommJob.getEmailSubject());
-              oMail.setTemplateName(oCommTemplate.getTemplateFileName());
-              oMail.setMailTo(oUser.getEmailId());
-              oMail.setMailFrom(mailFromAddress);
+            Mail oMail = new Mail();
+            oMail.setMailSubject(oCommJob.getEmailSubject());
+            oMail.setTemplateName(oCommTemplate.getTemplateFileName());
+            oMail.setMailTo(oUser.getEmailId());
+            oMail.setMailFrom(mailFromAddress);
+            if (null != oCommJob.getImageUrl() && !oCommJob.getImageUrl().isEmpty()) {
               oMail.getMapInlineImages().put("image1", oCommJob.getImageUrl());
-              emailGateway.sendMail(oMail);
-              CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
-                  .incrementProcessedCount();
-            } catch (MailSendException ex) {
-              // CommTemplateBuffer.
-              CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
-                  .incrementFailedCount();
             }
+            List<Mail> lstMail = lstMailsJobMap.get(oCommJob.getCommJobId());
+            if (null == lstMail) {
+              lstMail = new ArrayList<Mail>();
+              lstMailsJobMap.put(oCommJob.getCommJobId(), lstMail);
+            }
+            lstMail.add(oMail);
           } else if (oCommTemplate.getCommChannelId() == oSmsChannel.getParameterid()) {
             // SEND SMS
             try {
               logger.info("Sending SMS for User type : " + oUser.getUserType() + " ,UserId: "
-                  + oUser.getId() + " , Job Id : " + oCommJob.getCommJobId());
+                  + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId() +" , Job Id : " + oCommJob.getCommJobId());
               SMS sms = new SMS();
               sms.setRecipient(oUser.getPhoneNumber());
               sms.setMessage(oCommJob.getContent().toString());
               sms.setTemplateName(oCommTemplate.getTemplateFileName());
               smsGateway.sendSms(sms);
               CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
-                  .incrementProcessedCount();
+                  .incrementProcessedCount(1);
             } catch (Exception ex) {
               CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
-                  .incrementFailedCount();
+                  .incrementFailedCount(1);
             }
           }
         }
+      }
+    }
+
+    for (Entry<Integer, List<Mail>> jobMailEntry : lstMailsJobMap.entrySet()) {
+      List<Mail> lstMails = jobMailEntry.getValue();
+      int jobId = jobMailEntry.getKey();
+      try {
+        emailGateway.sendBatchMail(lstMails);
+        CommTemplateBuffer.getJobStatusMap().get(jobId).incrementProcessedCount(lstMails.size());
+        logger.info("Mail Sent Successfully for job id: " + jobId + " , Count: "+ lstMails.size());
+      } catch (MailException oException) {
+        logger.error("MailSending Failed: Count : "+ lstMails.size() + " , Error Message:"+oException.getMessage());
+        CommTemplateBuffer.getJobStatusMap().get(jobId).incrementFailedCount(lstMails.size());
       }
     }
   }

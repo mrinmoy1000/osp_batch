@@ -19,7 +19,8 @@
 		<property name="locations">
 			<list>
 				<value>queryList.properties</value>
-				<value>file:${CATALINA_HOME}/conf/osp.properties</value>
+				<!-- <value>osp_batch.properties</value> -->
+				<value>file:./osp_batch.properties</value>
 			</list>
 		</property>
 	</bean>
