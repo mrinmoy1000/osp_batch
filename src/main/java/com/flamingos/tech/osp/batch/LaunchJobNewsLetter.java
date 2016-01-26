@@ -13,39 +13,34 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener;
-
 public class LaunchJobNewsLetter {
-	private static final Logger logger = Logger
-			.getLogger(LaunchJobNewsLetter.class);
+  private static final Logger logger = Logger.getLogger(LaunchJobNewsLetter.class);
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		String[] springConfig = { "spring/batch/jobs/newslettersms-job.xml" };
+    String[] springConfig = {"spring/batch/jobs/newslettersms-job.xml"};
 
-		ApplicationContext context = new ClassPathXmlApplicationContext(
-				springConfig);
-		Map<String, JobParameter> jobParams = new HashMap<String, JobParameter>();
-		if (args.length == 1) {
-			jobParams.put("param_jobStartTime", new JobParameter(new Date()));
-		} else {
-			jobParams.put("job_execution_id", new JobParameter(args[1]));
-		}
-		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
-		Job job = (Job) context.getBean("partitionNewsLetterSmsJob");
+    ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
+    Map<String, JobParameter> jobParams = new HashMap<String, JobParameter>();
+    if (args.length == 1) {
+      jobParams.put("param_jobStartTime", new JobParameter(new Date()));
+    } else {
+      jobParams.put("job_execution_id", new JobParameter(args[1]));
+    }
+    JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
+    Job job = (Job) context.getBean("partitionNewsLetterSmsJob");
 
-		try {
+    try {
 
-			JobExecution execution = jobLauncher.run(job, new JobParameters(
-					jobParams));
-			logger.info("Exit Status : " + execution.getStatus());
+      JobExecution execution = jobLauncher.run(job, new JobParameters(jobParams));
+      logger.info("Exit Status : " + execution.getStatus());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getCause());
-		}
+    } catch (Exception e) {
+      e.printStackTrace();
+      logger.error(e.getCause());
+    }
 
-		logger.info("Done");
+    logger.info("Done");
 
-	}
+  }
 }

@@ -6,149 +6,149 @@ import java.util.Map;
 
 public class Mail {
 
-	/**
+  /**
    * 
    */
-	private String mailFrom;
+  private String mailFrom;
 
-	private String mailTo;
+  private String mailTo;
 
-	private String mailCc;
+  private String mailCc;
 
-	private String mailBcc;
+  private String mailBcc;
 
-	private String mailSubject;
+  private String mailSubject;
 
-	private String mailContent;
+  private String mailContent;
 
-	private String templateName;
+  private String templateName;
 
-	private String contentType;
-	
-	private String firstName;
-	
-	private String middleName;
-	
-	private String lastName;
+  private String contentType;
 
-	private Map<String, String> mapInlineImages;
+  private String firstName;
 
-	public Mail() {
-		contentType = "text/html";
-		mapInlineImages=new HashMap<String,String>();
-	}
+  private String middleName;
 
-	public String getContentType() {
-		return contentType;
-	}
+  private String lastName;
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+  private Map<String, String> mapInlineImages;
 
-	public String getMailBcc() {
-		return mailBcc;
-	}
+  public Mail() {
+    contentType = "text/html";
+    mapInlineImages = new HashMap<String, String>();
+  }
 
-	public String getTemplateName() {
-		return templateName;
-	}
+  public String getContentType() {
+    return contentType;
+  }
 
-	public void setTemplateName(String templateName) {
-		this.templateName = templateName;
-	}
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
 
-	public void setMailBcc(String mailBcc) {
-		this.mailBcc = mailBcc;
-	}
+  public String getMailBcc() {
+    return mailBcc;
+  }
 
-	public String getMailCc() {
-		return mailCc;
-	}
+  public String getTemplateName() {
+    return templateName;
+  }
 
-	public void setMailCc(String mailCc) {
-		this.mailCc = mailCc;
-	}
+  public void setTemplateName(String templateName) {
+    this.templateName = templateName;
+  }
 
-	public String getMailFrom() {
-		return mailFrom;
-	}
+  public void setMailBcc(String mailBcc) {
+    this.mailBcc = mailBcc;
+  }
 
-	public void setMailFrom(String mailFrom) {
-		this.mailFrom = mailFrom;
-	}
+  public String getMailCc() {
+    return mailCc;
+  }
 
-	public String getMailSubject() {
-		return mailSubject;
-	}
+  public void setMailCc(String mailCc) {
+    this.mailCc = mailCc;
+  }
 
-	public void setMailSubject(String mailSubject) {
-		this.mailSubject = mailSubject;
-	}
+  public String getMailFrom() {
+    return mailFrom;
+  }
 
-	public String getMailTo() {
-		return mailTo;
-	}
+  public void setMailFrom(String mailFrom) {
+    this.mailFrom = mailFrom;
+  }
 
-	public void setMailTo(String mailTo) {
-		this.mailTo = mailTo;
-	}
+  public String getMailSubject() {
+    return mailSubject;
+  }
 
-	public Date getMailSendDate() {
-		return new Date();
-	}
+  public void setMailSubject(String mailSubject) {
+    this.mailSubject = mailSubject;
+  }
 
-	public String getMailContent() {
-		return mailContent;
-	}
+  public String getMailTo() {
+    return mailTo;
+  }
 
-	public void setMailContent(String mailContent) {
-		this.mailContent = mailContent;
-	}
+  public void setMailTo(String mailTo) {
+    this.mailTo = mailTo;
+  }
 
-	public Map<String, String> getMapInlineImages() {
-		return mapInlineImages;
-	}
+  public Date getMailSendDate() {
+    return new Date();
+  }
 
-	public void setMapInlineImages(Map<String, String> mapInlineImages) {
-		this.mapInlineImages = mapInlineImages;
-	}
+  public String getMailContent() {
+    return mailContent;
+  }
 
-	@Override
-	public String toString() {
-		StringBuilder lBuilder = new StringBuilder();
-		lBuilder.append("Mail From:- ").append(getMailFrom());
-		lBuilder.append("Mail To:- ").append(getMailTo());
-		lBuilder.append("Mail Cc:- ").append(getMailCc());
-		lBuilder.append("Mail Bcc:- ").append(getMailBcc());
-		lBuilder.append("Mail Subject:- ").append(getMailSubject());
-		lBuilder.append("Mail Send Date:- ").append(getMailSendDate());
-		lBuilder.append("Mail Content:- ").append(getMailContent());
-		return lBuilder.toString();
-	}
+  public void setMailContent(String mailContent) {
+    this.mailContent = mailContent;
+  }
 
-	public String getFirstName() {
-		return firstName;
-	}
+  public Map<String, String> getMapInlineImages() {
+    return mapInlineImages;
+  }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+  public void setMapInlineImages(Map<String, String> mapInlineImages) {
+    this.mapInlineImages = mapInlineImages;
+  }
 
-	public String getMiddleName() {
-		return middleName;
-	}
+  @Override
+  public String toString() {
+    StringBuilder lBuilder = new StringBuilder();
+    lBuilder.append("Mail From:- ").append(getMailFrom());
+    lBuilder.append("Mail To:- ").append(getMailTo());
+    lBuilder.append("Mail Cc:- ").append(getMailCc());
+    lBuilder.append("Mail Bcc:- ").append(getMailBcc());
+    lBuilder.append("Mail Subject:- ").append(getMailSubject());
+    lBuilder.append("Mail Send Date:- ").append(getMailSendDate());
+    lBuilder.append("Mail Content:- ").append(getMailContent());
+    return lBuilder.toString();
+  }
 
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
+  public String getFirstName() {
+    return firstName;
+  }
 
-	public String getLastName() {
-		return lastName;
-	}
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+  public String getMiddleName() {
+    return middleName;
+  }
+
+  public void setMiddleName(String middleName) {
+    this.middleName = middleName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
 }

@@ -47,10 +47,10 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
   private EmailGateway emailGateway;
   @Autowired
   private SmsGateway smsGateway;
-  
+
   @Value("${mail.smtp.sender.from}")
   private String mailFromAddress;
-  
+
   @Value("${osp.batch.valid.email.pattern}")
   private String EMAIL_PATTERN;
 

@@ -28,6 +28,6 @@ public class AppConstants {
 
   public static String KEY_ALL = "ALL";
   public static String VTEMP_QUALIFIER = "newMessage";
-  
-  public static String MESSAGE_COMM_JOB_INITIAL="INITIAL";
+
+  public static String MESSAGE_COMM_JOB_INITIAL = "INITIAL";
 }

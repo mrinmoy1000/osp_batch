@@ -102,6 +102,15 @@ public class NewsLetterJobListener implements JobExecutionListener, Initializing
         LOGGER.info("Newsletter Job Executed");
       } else {
         LOGGER.info("JOB Terminated Aborabtly Updating All Jobs to fail");
+        for (Entry<Integer, JobStatusModel> jobStatusModelEntry : jobMap) {
+          JobStatusModel jobStatusModel = jobStatusModelEntry.getValue();
+          LOGGER.info("Job Id: " + jobStatusModelEntry.getKey() + " ,TotalNoToSend : "
+              + jobStatusModel.getTotalNoToSent() + " , Processed : "
+              + jobStatusModel.getProcessedCount() + " , Failed : "
+              + jobStatusModel.getFailedCount());
+          // Update Job as Failed.
+          updateJobStatus(jobStatusModel.getCommJobId(), oJobStatusFailed.getParameterid());
+        }
       }
     }
   }

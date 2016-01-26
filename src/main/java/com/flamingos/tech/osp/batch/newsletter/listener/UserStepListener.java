@@ -15,37 +15,33 @@ import org.springframework.batch.item.ExecutionContext;
  */
 public class UserStepListener implements StepExecutionListener {
 
-	private static final Logger logger = Logger
-			.getLogger(UserStepListener.class);
+  private static final Logger logger = Logger.getLogger(UserStepListener.class);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.batch.core.StepExecutionListener#beforeStep(org.
-	 * springframework.batch.core .StepExecution)
-	 */
-	public void beforeStep(StepExecution stepExecution) {
-		// TODO Auto-generated method stub
-		logger.info("Execution begening for : "
-				+ stepExecution.getStepName());
-		ExecutionContext oExecutionContext = stepExecution
-				.getExecutionContext();
-		// oExecutionContext.
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.springframework.batch.core.StepExecutionListener#beforeStep(org.
+   * springframework.batch.core .StepExecution)
+   */
+  public void beforeStep(StepExecution stepExecution) {
+    // TODO Auto-generated method stub
+    logger.info("Execution begening for : " + stepExecution.getStepName());
+    ExecutionContext oExecutionContext = stepExecution.getExecutionContext();
+    // oExecutionContext.
 
-	}
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.batch.core.StepExecutionListener#afterStep(org.
-	 * springframework.batch.core .StepExecution)
-	 */
-	public ExitStatus afterStep(StepExecution stepExecution) {
-		// TODO Auto-generated method stub
-		logger.info("Execution end for : "
-				+ stepExecution.getStepName());
-		
-		return null;
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.springframework.batch.core.StepExecutionListener#afterStep(org.
+   * springframework.batch.core .StepExecution)
+   */
+  public ExitStatus afterStep(StepExecution stepExecution) {
+    // TODO Auto-generated method stub
+    logger.info("Execution end for : " + stepExecution.getStepName());
+
+    return null;
+  }
 
 }

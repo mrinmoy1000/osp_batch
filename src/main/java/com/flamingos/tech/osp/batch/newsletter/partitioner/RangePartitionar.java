@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.apache.log4j.Logger;
 // import org.apache.log4j.Logger;
 // import org.apache.log4j.spi.LoggerFactory;
@@ -18,15 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.flamingos.tech.osp.batch.newsletter.listener.NewsLetterJobListener;
-
 /**
  * @author Mrinmoy
  *
  */
 public class RangePartitionar implements Partitioner {
 
-    private static final Logger logger = Logger.getLogger(RangePartitionar.class);
+  private static final Logger logger = Logger.getLogger(RangePartitionar.class);
 
   @Autowired
   private NamedParameterJdbcTemplate oNamedParameterJdbcTemplate;
@@ -88,11 +85,11 @@ public class RangePartitionar implements Partitioner {
     Long fromId = minId;
     Long toId = pageSize;
 
-    logger.info("\nStarting "+partingModule +" Records : " + recordMap);
+    logger.info("\nStarting " + partingModule + " Records : " + recordMap);
     for (int threadIndex = 1; threadIndex <= gridSize; threadIndex++) {
       ExecutionContext contextValue = new ExecutionContext();
       logger.info("\nStarting " + partingModule + " : Thread_" + threadIndex + " , fromId: "
-              + fromId + " , toId: " + toId);
+          + fromId + " , toId: " + toId);
 
       contextValue.put("fromId", fromId);
       contextValue.put("toId", toId);

@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 
 public class AppUtil {
 
@@ -32,6 +31,7 @@ public class AppUtil {
 
   /**
    * Returns true if value matches the pattern, else false.
+   * 
    * @param pattern
    * @param value
    * @return
