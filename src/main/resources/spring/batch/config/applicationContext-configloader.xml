@@ -12,7 +12,7 @@
 	<bean id="ospErrorHandler" class="com.flamingos.osp.exception.OSPErrorHandler"></bean>
 	<bean id="configParamBean" class="com.flamingos.osp.bean.ConfigParamBean"
 		init-method="loadConfigParam"></bean>
-
+	
 
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

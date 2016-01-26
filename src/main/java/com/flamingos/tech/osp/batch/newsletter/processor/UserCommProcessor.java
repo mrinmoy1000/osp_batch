@@ -105,7 +105,6 @@ public class UserCommProcessor implements ItemProcessor<User, UserCommunication>
           user.getStatus()))
           && oCommJob.getLstTargetUserStatus().contains(user.getStatus())) {
         if (oTemplate.getCommChannelId() == oEmailChannel.getParameterid()
-            && null != user.getEmailId()
             && user.getSubscriptionsCat().contains(oTemplate.getTemplateSubCatId())) {
           finalApplicableTemplates.add(oJobTemplate);
         } else if (oTemplate.getCommChannelId() == oSmsChannel.getParameterid()

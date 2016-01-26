@@ -25,6 +25,7 @@ import com.flamingos.osp.email.Mail;
 import com.flamingos.osp.sms.SMS;
 import com.flamingos.osp.sms.SmsGateway;
 import com.flamingos.osp.util.AppConstants;
+import com.flamingos.osp.util.AppUtil;
 import com.flamingos.tech.osp.batch.buffer.CommTemplateBuffer;
 import com.flamingos.tech.osp.batch.model.User;
 import com.flamingos.tech.osp.batch.newsletter.model.CommJob;
@@ -46,13 +47,17 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
   private EmailGateway emailGateway;
   @Autowired
   private SmsGateway smsGateway;
+  
   @Value("${mail.smtp.sender.from}")
   private String mailFromAddress;
+  
+  @Value("${osp.batch.valid.email.pattern}")
+  private String EMAIL_PATTERN;
 
   ConfigParamDto oEmailChannel = null;
   ConfigParamDto oSmsChannel = null;
 
-  private static final Logger logger = Logger.getLogger(UserCommJobWriter.class);
+  private static final Logger LOGGER = Logger.getLogger(UserCommJobWriter.class);
 
   /**
    * @param threadName the threadName to set
@@ -91,28 +96,36 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
 
           if (oCommTemplate.getCommChannelId() == oEmailChannel.getParameterid()) {
             // SEND EMAIL
-            logger.info("Preparing send Email for User type : " + oUser.getUserType() + " ,UserId: "
-                + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId() + " , Job Id : " + oCommJob.getCommJobId());
-
-            Mail oMail = new Mail();
-            oMail.setMailSubject(oCommJob.getEmailSubject());
-            oMail.setTemplateName(oCommTemplate.getTemplateFileName());
-            oMail.setMailTo(oUser.getEmailId());
-            oMail.setMailFrom(mailFromAddress);
-            if (null != oCommJob.getImageUrl() && !oCommJob.getImageUrl().isEmpty()) {
-              oMail.getMapInlineImages().put("image1", oCommJob.getImageUrl());
+            LOGGER.info("Preparing send Email for User type : " + oUser.getUserType()
+                + " ,UserId: " + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId()
+                + " , Job Id : " + oCommJob.getCommJobId());
+            if (AppUtil.checkPattern(EMAIL_PATTERN, oUser.getEmailId())) {
+              Mail oMail = new Mail();
+              oMail.setMailSubject(oCommJob.getEmailSubject());
+              oMail.setTemplateName(oCommTemplate.getTemplateFileName());
+              oMail.setMailTo(oUser.getEmailId());
+              oMail.setMailFrom(mailFromAddress);
+              if (null != oCommJob.getImageUrl() && !oCommJob.getImageUrl().isEmpty()) {
+                oMail.getMapInlineImages().put("image1", oCommJob.getImageUrl());
+              }
+              List<Mail> lstMail = lstMailsJobMap.get(oCommJob.getCommJobId());
+              if (null == lstMail) {
+                lstMail = new ArrayList<Mail>();
+                lstMailsJobMap.put(oCommJob.getCommJobId(), lstMail);
+              }
+              lstMail.add(oMail);
+            } else {
+              LOGGER.error("Invalid Email Id , ,UserId: " + oUser.getId() + " Email Id: "
+                  + oUser.getEmailId());
+              CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
+                  .incrementFailedCount(1);
             }
-            List<Mail> lstMail = lstMailsJobMap.get(oCommJob.getCommJobId());
-            if (null == lstMail) {
-              lstMail = new ArrayList<Mail>();
-              lstMailsJobMap.put(oCommJob.getCommJobId(), lstMail);
-            }
-            lstMail.add(oMail);
           } else if (oCommTemplate.getCommChannelId() == oSmsChannel.getParameterid()) {
             // SEND SMS
             try {
-              logger.info("Sending SMS for User type : " + oUser.getUserType() + " ,UserId: "
-                  + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId() +" , Job Id : " + oCommJob.getCommJobId());
+              LOGGER.info("Sending SMS for User type : " + oUser.getUserType() + " ,UserId: "
+                  + oUser.getId() + " , Template: " + oCommTemplate.getTemplateId()
+                  + " , Job Id : " + oCommJob.getCommJobId());
               SMS sms = new SMS();
               sms.setRecipient(oUser.getPhoneNumber());
               sms.setMessage(oCommJob.getContent().toString());
@@ -135,9 +148,10 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
       try {
         emailGateway.sendBatchMail(lstMails);
         CommTemplateBuffer.getJobStatusMap().get(jobId).incrementProcessedCount(lstMails.size());
-        logger.info("Mail Sent Successfully for job id: " + jobId + " , Count: "+ lstMails.size());
+        LOGGER.info("Mail Sent Successfully for job id: " + jobId + " , Count: " + lstMails.size());
       } catch (MailException oException) {
-        logger.error("MailSending Failed: Count : "+ lstMails.size() + " , Error Message:"+oException.getMessage());
+        LOGGER.error("MailSending Failed: Count : " + lstMails.size() + " , Error Message:"
+            + oException.getMessage());
         CommTemplateBuffer.getJobStatusMap().get(jobId).incrementFailedCount(lstMails.size());
       }
     }
