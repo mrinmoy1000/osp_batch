@@ -212,6 +212,7 @@
 										<include>**/osp_batch.properties</include>
 										<include>**/log4j.properties</include>
 										<include>**/NewsLetterBatch.bat</include>
+										<include>**/NewsLetterBatch.sh</include>
 									</includes>
 								</resource>
 							</resources>
