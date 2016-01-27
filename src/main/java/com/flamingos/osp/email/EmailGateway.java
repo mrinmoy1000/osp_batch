@@ -15,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.velocity.VelocityEngineUtils;
@@ -24,6 +25,9 @@ import com.flamingos.osp.util.AppConstants;
 public class EmailGateway {
   private JavaMailSender mailSender;
   private VelocityEngine velocityEngine;
+  
+  @Value("${osp.batch.newsletter.max.mail.count.per.batch}")
+  private int MAX_MAIL_COUNT_PER_BATCH;
 
   public void setMailSender(JavaMailSender mailSender) {
     this.mailSender = mailSender;
@@ -86,14 +90,20 @@ public class EmailGateway {
    * 
    * @param mails
    */
-  public void sendBatchMail(List<Mail> mails) {
+  public void sendBatchMail(List<Mail> mails) throws Exception {
     if (null != mails && !mails.isEmpty()) {
       List<MimeMessagePreparator> lstMimeMessage = new ArrayList<MimeMessagePreparator>();
       for (Mail oMail : mails) {
         MimeMessagePreparator prepartor = createMimeMessagePreparator(oMail);
         lstMimeMessage.add(prepartor);
+        if (lstMimeMessage.size() >= MAX_MAIL_COUNT_PER_BATCH) {
+          mailSender.send(lstMimeMessage.toArray(new MimeMessagePreparator[lstMimeMessage.size()]));
+          lstMimeMessage.clear();
+        }
       }
-      mailSender.send(lstMimeMessage.toArray(new MimeMessagePreparator[lstMimeMessage.size()]));
+      if (!lstMimeMessage.isEmpty()) {
+        mailSender.send(lstMimeMessage.toArray(new MimeMessagePreparator[lstMimeMessage.size()]));
+      }
     }
   }
 

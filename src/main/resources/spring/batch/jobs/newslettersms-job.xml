@@ -231,7 +231,7 @@
 					((cj.job_status=(select param_id from OSP_PARAMETER where param_code='JOB_STATUS' and param_name='INITIAL')
 					and curdate()=cj.job_date) or (cj.is_implicit_job=1 && (cj.updated_ts is null or 
 					cj.job_status=(select param_id from OSP_PARAMETER where param_code='JOB_STATUS' and param_name='FAILED')
-					or (DATEDIFF(cj.updated_ts,sysdate()) >= ${osp.batch.newsletter.implicitjob.frequency.days} ))))
+					or (DATEDIFF(sysdate(),cj.updated_ts) >= ${osp.batch.newsletter.implicitjob.frequency.days} ))))
 					and ct.temp_cat_id=(select param_id from OSP_PARAMETER where param_code='COMM_TEMPLATE_CATEGORY' and param_name='NEWSLETTER');
 					
 				]]>

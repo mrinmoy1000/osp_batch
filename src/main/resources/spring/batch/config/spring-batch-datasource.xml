@@ -14,6 +14,12 @@
 		<property name="password" value="${osp.jdbc.password}" />
 	</bean>
 
+	<bean id="txManagerOsp"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
 	<bean id="dataSourceBatchRepos"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${osp.jdbc.driverClassName}" />
@@ -21,6 +27,12 @@
 		<property name="username" value="${osp.jdbc.username}" />
 		<property name="password" value="${osp.jdbc.password}" />
 	</bean>
+
+	<bean id="txManagerBatch"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceBatchRepos" />
+	</bean>
+
 
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<property name="dataSource" ref="dataSource" />

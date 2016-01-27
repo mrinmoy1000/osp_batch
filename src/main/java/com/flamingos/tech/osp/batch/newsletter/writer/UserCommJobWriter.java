@@ -105,6 +105,9 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
               oMail.setTemplateName(oCommTemplate.getTemplateFileName());
               oMail.setMailTo(oUser.getEmailId());
               oMail.setMailFrom(mailFromAddress);
+              oMail.setFirstName(oUser.getfName());
+              oMail.setMiddleName(oUser.getmName());
+              oMail.setLastName(oUser.getlName());
               if (null != oCommJob.getImageUrl() && !oCommJob.getImageUrl().isEmpty()) {
                 oMail.getMapInlineImages().put("image1", oCommJob.getImageUrl());
               }
