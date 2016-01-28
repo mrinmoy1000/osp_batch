@@ -56,6 +56,7 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
 
   ConfigParamDto oEmailChannel = null;
   ConfigParamDto oSmsChannel = null;
+  
 
   private static final Logger LOGGER = Logger.getLogger(UserCommJobWriter.class);
 
