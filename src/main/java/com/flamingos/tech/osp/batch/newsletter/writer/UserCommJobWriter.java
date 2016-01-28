@@ -3,11 +3,17 @@
  */
 package com.flamingos.tech.osp.batch.newsletter.writer;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
@@ -112,6 +118,10 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
             if (AppUtil.checkPattern(EMAIL_PATTERN, oUser.getEmailId())) {
               Mail oMail = new Mail();
               oMail.setMailSubject(oCommJob.getEmailSubject());
+              Blob contentblob=oCommJob.getContent();
+              String content=new String(DatatypeConverter.parseHexBinary(new String(contentblob.getBytes(1, (int)contentblob.length()))));
+              LOGGER.info("Blob Content:"+content);
+              oMail.setMailContent(content);
               oMail.setTemplateName(oCommTemplate.getTemplateFileName());
               oMail.setMailTo(oUser.getEmailId());
               oMail.setMailFrom(mailFromAddress);
