@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate>, Initiali
 
   @Value("${query_osp_newsletter_all_active_sub_category_ids_in_cat_ids}")
   private String SQL_SELECTIVE_ACTIVE_SUB_CAT;
+
+  private static final Logger LOGGER = Logger.getLogger(CommTemplateWriter.class);
 
   /*
    * (non-Javadoc)
@@ -124,9 +127,9 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate>, Initiali
       if ((oCommJob.getTargetUser() == oClientUser.getParameterid()) // CLIENT
           || (oCommJob.getTargetUser() == oAllUser.getParameterid())) {// ALL
         if (!oCommJob.isTargetUserAllStatus()) {
-          CommTemplateBuffer.getCientJobStatusSet().addAll(oCommJob.getLstTargetUserStatus());
+          CommTemplateBuffer.getClientJobStatusSet().addAll(oCommJob.getLstTargetUserStatus());
         } else {
-          CommTemplateBuffer.getCientJobStatusSet().addAll(activeUserStatus);
+          CommTemplateBuffer.getClientJobStatusSet().addAll(activeUserStatus);
         }
         Map<String, List<CommJobTemplate>> clientJobTemplates =
             CommTemplateBuffer.getTemplateForClients();
@@ -138,7 +141,9 @@ public class CommTemplateWriter implements ItemWriter<CommJobTemplate>, Initiali
         allClientJobTempList.add(oCommJobTemplate);
       }
     }
-
+    LOGGER.info("Prof Job Status Set :" + CommTemplateBuffer.getProfessionalJobStatusSet());
+    LOGGER.info("Prof Sub Cat Set :" + CommTemplateBuffer.getProfessionalJobSubCatSet());
+    LOGGER.info("Client Job Status Set :" + CommTemplateBuffer.getClientJobStatusSet());
   }
 
   @Override

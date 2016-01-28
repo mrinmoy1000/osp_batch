@@ -169,7 +169,7 @@
 		scope="step">
 		<property name="rangeSql"
 			value="select coalesce(min(oc.client_id),0) min_id,coalesce(max(oc.client_id),0) max_id , count(1) tot_count from OSP_CLIENT oc
-			where oc.status in ( #{@commTemplateBuffer.getCientJobStatusSet()} )" />
+			where oc.status in ( #{@commTemplateBuffer.getClientJobStatusSet()} )" />
 		<property name="partingModule" value="CLIENT_NEWSLETTER" />
 	</bean>
 
@@ -208,7 +208,7 @@
 			<map>
 				<entry key="fromId" value="#{stepExecutionContext[fromId]}" />
 				<entry key="toId" value="#{stepExecutionContext[toId]}" />
-				<entry key="clientStatus" value="#{@commTemplateBuffer.getCientJobStatusSet()}" />
+				<entry key="clientStatus" value="#{@commTemplateBuffer.getClientJobStatusSet()}" />
 			</map>
 		</property>
 		<property name="pageSize" value="#{stepExecutionContext[pageSize]}" />

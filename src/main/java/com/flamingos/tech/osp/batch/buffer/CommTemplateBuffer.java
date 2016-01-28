@@ -38,7 +38,7 @@ public class CommTemplateBuffer {
 
   private static Set<Integer> professionalJobStatusSet = new HashSet<Integer>();
 
-  private static Set<Integer> cientJobStatusSet = new HashSet<Integer>();
+  private static Set<Integer> clientJobStatusSet = new HashSet<Integer>();
 
   private static Map<Integer, JobStatusModel> jobStatusMap = new HashMap<Integer, JobStatusModel>();
 
@@ -46,7 +46,7 @@ public class CommTemplateBuffer {
 
   {
     professionalJobStatusSet.add(0);
-    cientJobStatusSet.add(0);
+    clientJobStatusSet.add(0);
     professionalJobSubCatSet.add(0);
   }
 
@@ -79,10 +79,10 @@ public class CommTemplateBuffer {
   }
 
   /**
-   * @return the cientJobStatusSet
+   * @return the clientJobStatusSet
    */
-  public static Set<Integer> getCientJobStatusSet() {
-    return cientJobStatusSet;
+  public static Set<Integer> getClientJobStatusSet() {
+    return clientJobStatusSet;
   }
 
   /**
