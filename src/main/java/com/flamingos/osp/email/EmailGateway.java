@@ -21,11 +21,12 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.flamingos.osp.util.AppConstants;
+import com.flamingos.osp.util.EncryptionUtil;
 
 public class EmailGateway {
   private JavaMailSender mailSender;
   private VelocityEngine velocityEngine;
-  
+
   @Value("${osp.batch.newsletter.max.mail.count.per.batch}")
   private int MAX_MAIL_COUNT_PER_BATCH;
 

@@ -31,6 +31,20 @@ public class Mail {
 
   private String lastName;
 
+  private String orgAddress;
+
+  private String orgPhoneNo;
+
+  private String orgName;
+
+  private String uuid;
+
+  private String registrationURL;
+
+  private long entityId;
+
+
+
   private Map<String, String> mapInlineImages;
 
   public Mail() {
@@ -151,4 +165,87 @@ public class Mail {
     this.lastName = lastName;
   }
 
+  /**
+   * @return the orgAddress
+   */
+  public String getOrgAddress() {
+    return orgAddress;
+  }
+
+  /**
+   * @param orgAddress the orgAddress to set
+   */
+  public void setOrgAddress(String orgAddress) {
+    this.orgAddress = orgAddress;
+  }
+
+  /**
+   * @return the orgPhoneNo
+   */
+  public String getOrgPhoneNo() {
+    return orgPhoneNo;
+  }
+
+  /**
+   * @param orgPhoneNo the orgPhoneNo to set
+   */
+  public void setOrgPhoneNo(String orgPhoneNo) {
+    this.orgPhoneNo = orgPhoneNo;
+  }
+
+  /**
+   * @return the orgName
+   */
+  public String getOrgName() {
+    return orgName;
+  }
+
+  /**
+   * @param orgName the orgName to set
+   */
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
+  }
+
+  /**
+   * @return the uuid
+   */
+  public String getUuid() {
+    return uuid;
+  }
+
+  /**
+   * @param uuid the uuid to set
+   */
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  /**
+   * @return the entityId
+   */
+  public long getEntityId() {
+    return entityId;
+  }
+
+  /**
+   * @param entityId the entityId to set
+   */
+  public void setEntityId(long entityId) {
+    this.entityId = entityId;
+  }
+
+  /**
+   * @return the registrationURL
+   */
+  public String getRegistrationURL() {
+    return registrationURL;
+  }
+
+  /**
+   * @param registrationURL the registrationURL to set
+   */
+  public void setRegistrationURL(String registrationURL) {
+    this.registrationURL = registrationURL;
+  }
 }

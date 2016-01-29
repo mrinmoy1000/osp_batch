@@ -21,6 +21,7 @@
 		<velocity.version>1.7</velocity.version>
 		<java.mail.version>1.4.7</java.mail.version>
 		<spring.convext.support.version>4.2.4.RELEASE</spring.convext.support.version>
+		<commons-codec.version>1.10</commons-codec.version>
 	</properties>
 
 	<dependencies>
@@ -85,6 +86,13 @@
 		</dependency>
 
 		<!--Mail dependency -->
+		<!-- Apache Commons -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
+		</dependency>
+
 		<!-- Spring Batch unit test -->
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
