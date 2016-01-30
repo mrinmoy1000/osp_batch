@@ -65,7 +65,11 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
   private String ORG_PHONE_NO;
   @Value("${osp.app.registration.url}")
   private String OSP_APP_REGISTRATION_URL;
+  @Value("${osp.batch.newsletter.max.mail.count.per.thread}")
+  private int maxMailPerThread;
 
+  int mailCount=0;
+  
   @Value("${osp.batch.valid.email.pattern}")
   private String EMAIL_PATTERN;
 
@@ -102,6 +106,7 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
   public void write(List<? extends UserCommunication> oCommunications) throws Exception {
     System.out.println("UserCommunication : " + oCommunications.size());
     Map<Integer, List<Mail>> lstMailsJobMap = new HashMap<Integer, List<Mail>>();
+    
     for (UserCommunication oUserComm : oCommunications) {
       User oUser = oUserComm.getoUser();
       List<CommJobTemplate> templates = oUserComm.getLstCommJobTemplate();
@@ -145,12 +150,17 @@ public class UserCommJobWriter implements ItemWriter<UserCommunication>, Initial
                 lstMailsJobMap.put(oCommJob.getCommJobId(), lstMail);
               }
               lstMail.add(oMail);
+              mailCount++;
+              if(mailCount==maxMailPerThread){
+              	break;
+              }
             } else {
               LOGGER.error(threadName + " : Invalid Email Id , ,UserId: " + oUser.getId()
                   + " Email Id: " + oUser.getEmailId());
               CommTemplateBuffer.getJobStatusMap().get(oCommJob.getCommJobId())
                   .incrementFailedCount(1);
             }
+            
           } else if (oCommTemplate.getCommChannelId() == oSmsChannel.getParameterid()) {
             // SEND SMS
             try {
