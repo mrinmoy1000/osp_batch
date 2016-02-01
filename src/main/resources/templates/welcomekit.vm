@@ -100,7 +100,7 @@
 											<td bgcolor="#ED006F" align="center" style="border-radius:4px;" width="200" height="50">
 												<div class="contentEditableContainer contentTextEditable">
 								                	<div class="contentEditable" align='center' >
-								                  		<a target='_blank' href="${newMessage.registrationURL}?${newMessage.uuid}" class='link2'>Click here to reset it</a>
+								                  		<a target='_blank' href="${newMessage.registrationURL}${newMessage.uuid}" class='link2'>Click here to reset it</a>
 								                	</div>
 								              	</div>
 											</td>

@@ -20,6 +20,7 @@
 		<log4j.version>1.2.17</log4j.version>
 		<velocity.version>1.7</velocity.version>
 		<java.mail.version>1.4.7</java.mail.version>
+		<java.mail.api.version>1.5.5</java.mail.api.version>
 		<spring.convext.support.version>4.2.4.RELEASE</spring.convext.support.version>
 		<commons-codec.version>1.10</commons-codec.version>
 	</properties>
@@ -79,6 +80,12 @@
 			<artifactId>mail</artifactId>
 			<version>${java.mail.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>${java.mail.api.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
